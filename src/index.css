@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Base Colors - Modern Productivity Palette */
+    --background: 240 10% 98%;
+    --foreground: 240 10% 3.9%;
+    
+    /* Card System */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    
+    /* Primary - Productivity Blue */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 217 91% 70%;
+    
+    /* Secondary - Soft Slate */
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+    
+    /* Muted */
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    
+    /* Accent - Success Green */
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 98%;
+    --accent-glow: 142 76% 46%;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Warning - Productivity Orange */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+    
+    /* Borders and Inputs */
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 217 91% 60%;
+    
+    --radius: 0.75rem;
+    
+    /* Sidebar System */
+    --sidebar-background: 240 6% 97%;
+    --sidebar-foreground: 240 5% 15%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 5% 94%;
+    --sidebar-accent-foreground: 240 6% 10%;
+    --sidebar-border: 240 6% 85%;
+    --sidebar-ring: 217 91% 60%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
+    --gradient-accent: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+    --gradient-bg: linear-gradient(180deg, hsl(240 10% 98%), hsl(240 5% 96%));
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(240 5% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(240 5% 15% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(240 5% 15% / 0.1);
+    --shadow-primary: 0 4px 14px 0 hsl(217 91% 60% / 0.25);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    /* Base Colors - Dark Mode */
+    --background: 240 10% 3.9%;
+    --foreground: 240 10% 98%;
+    
+    /* Card System */
+    --card: 240 10% 3.9%;
+    --card-foreground: 240 10% 98%;
+    
+    /* Popover */
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 240 10% 98%;
+    
+    /* Primary - Productivity Blue (lighter in dark) */
+    --primary: 217 91% 70%;
+    --primary-foreground: 240 10% 3.9%;
+    --primary-glow: 217 91% 80%;
+    
+    /* Secondary - Dark Slate */
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 240 5% 84%;
+    
+    /* Muted */
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 64%;
+    
+    /* Accent - Success Green (lighter in dark) */
+    --accent: 142 76% 46%;
+    --accent-foreground: 240 10% 3.9%;
+    --accent-glow: 142 76% 56%;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 240 10% 98%;
+    
+    /* Warning - Productivity Orange */
+    --warning: 38 92% 60%;
+    --warning-foreground: 240 10% 3.9%;
+    
+    /* Borders and Inputs */
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 217 91% 70%;
+    
+    /* Sidebar System */
+    --sidebar-background: 240 6% 7%;
+    --sidebar-foreground: 240 5% 84%;
+    --sidebar-primary: 217 91% 70%;
+    --sidebar-primary-foreground: 240 10% 3.9%;
+    --sidebar-accent: 240 4% 12%;
+    --sidebar-accent-foreground: 240 5% 84%;
+    --sidebar-border: 240 4% 16%;
+    --sidebar-ring: 217 91% 70%;
+    
+    /* Gradients - Darker versions */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 70%), hsl(217 91% 80%));
+    --gradient-accent: linear-gradient(135deg, hsl(142 76% 46%), hsl(142 76% 56%));
+    --gradient-bg: linear-gradient(180deg, hsl(240 10% 3.9%), hsl(240 6% 7%));
+    
+    /* Shadows - Darker */
+    --shadow-sm: 0 1px 2px 0 hsl(240 10% 0% / 0.5);
+    --shadow-md: 0 4px 6px -1px hsl(240 10% 0% / 0.5);
+    --shadow-lg: 0 10px 15px -3px hsl(240 10% 0% / 0.5);
+    --shadow-primary: 0 4px 14px 0 hsl(217 91% 70% / 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+  
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
