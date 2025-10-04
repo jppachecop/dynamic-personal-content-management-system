@@ -1,0 +1,79 @@
+import prisma from "../config/prisma";
+import { User, CreateUserInput, UpdateUserInput } from "../types";
+
+export class UserRepository {
+  async create(userData: CreateUserInput): Promise<User> {
+    const user = await prisma.user.create({
+      data: {
+        name: userData.name,
+        email: userData.email,
+        avatar: userData.avatar,
+      },
+    });
+    
+    return user;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+    
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    
+    return user;
+  }
+
+  async findAll(): Promise<User[]> {
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    
+    return users;
+  }
+
+  async update(userData: UpdateUserInput): Promise<User> {
+    if (!userData.id) {
+      throw new Error("User ID is required for update");
+    }
+
+    const { id, ...updateData } = userData;
+    
+    // Remove undefined values
+    const cleanUpdateData = Object.fromEntries(
+      Object.entries(updateData).filter(([_, value]) => value !== undefined)
+    );
+
+    if (Object.keys(cleanUpdateData).length === 0) {
+      throw new Error("No fields to update");
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: cleanUpdateData,
+    });
+
+    return user;
+  }
+
+  async delete(id: string): Promise<void> {
+    await prisma.user.delete({
+      where: { id },
+    });
+  }
+
+  async exists(id: string): Promise<boolean> {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    
+    return user !== null;
+  }
+}

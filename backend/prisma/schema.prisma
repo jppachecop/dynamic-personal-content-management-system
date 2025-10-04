@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  avatar    String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  notes Note[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Note {
+  id         String   @id @default(uuid()) @db.Uuid
+  title      String   @db.VarChar(500)
+  content    String
+  tags       String[]
+  category   String   @db.VarChar(255)
+  userId     String   @map("user_id") @db.Uuid
+  isFavorite Boolean  @default(false) @map("is_favorite")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@index([createdAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
+  @@index([isFavorite])
+  @@index([tags], type: Gin)
+  @@map("notes")
+}
+
+model Tag {
+  id    String @id @default(uuid()) @db.Uuid
+  name  String @unique @db.VarChar(255)
+  color String @db.VarChar(7)
+  count Int    @default(0)
+
+  @@index([name])
+  @@map("tags")
+}
+
+model Category {
+  id    String @id @default(uuid()) @db.Uuid
+  name  String @unique @db.VarChar(255)
+  color String @db.VarChar(7)
+  icon  String @db.VarChar(50)
+
+  @@index([name])
+  @@map("categories")
+}
