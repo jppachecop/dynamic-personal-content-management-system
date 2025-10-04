@@ -2,9 +2,9 @@ import { Router, Request, Response } from "express";
 import { TagRepository } from "../repositories/TagRepository";
 import { ApiResponse, CreateTagInput, UpdateTagInput } from "../types";
 import {
-  validateCreateTag,
-  validateUpdateTag,
   validateId,
+  createTagValidation,
+  validateUpdateTag,
 } from "../middleware/validation";
 import { asyncHandler } from "../middleware/errorHandler";
 
@@ -104,7 +104,7 @@ router.get(
 // POST /api/tags - Create new tag
 router.post(
   "/",
-  validateCreateTag,
+  createTagValidation,
   asyncHandler(async (req: Request, res: Response<ApiResponse>) => {
     const tagData: CreateTagInput = req.body;
 

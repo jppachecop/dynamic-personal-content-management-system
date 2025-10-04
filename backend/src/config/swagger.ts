@@ -124,13 +124,12 @@ const options: swaggerJsdoc.Options = {
             updatedAt: {
               type: "string",
               format: "date-time",
-              description: "Timestamp when note was last updated",
             },
           },
         },
         Tag: {
           type: "object",
-          required: ["id", "name", "color", "count"],
+          required: ["id", "name", "count"],
           properties: {
             id: {
               type: "string",
@@ -141,23 +140,17 @@ const options: swaggerJsdoc.Options = {
               type: "string",
               minLength: 1,
               maxLength: 255,
-              description: "Tag name",
-            },
-            color: {
-              type: "string",
-              pattern: "^#[0-9A-Fa-f]{6}$",
-              description: "Hex color code for the tag",
+              description: "Name of the tag",
             },
             count: {
               type: "integer",
               minimum: 0,
-              description: "Number of times this tag is used",
             },
           },
         },
         Category: {
           type: "object",
-          required: ["id", "name", "color", "icon"],
+          required: ["id", "name", "color"],
           properties: {
             id: {
               type: "string",
@@ -168,18 +161,12 @@ const options: swaggerJsdoc.Options = {
               type: "string",
               minLength: 1,
               maxLength: 255,
-              description: "Category name",
+              description: "Name of the category",
             },
             color: {
               type: "string",
               pattern: "^#[0-9A-Fa-f]{6}$",
               description: "Hex color code for the category",
-            },
-            icon: {
-              type: "string",
-              minLength: 1,
-              maxLength: 50,
-              description: "Icon identifier for the category",
             },
           },
         },
@@ -244,53 +231,41 @@ const options: swaggerJsdoc.Options = {
         },
         CreateTagInput: {
           type: "object",
+          required: ["name"],
+          properties: {
+            name: {
+              type: "string",
+              minLength: 1,
+              maxLength: 255,
+              description: "Name of the tag",
+            },
+            count: {
+              type: "integer",
+              minimum: 0,
+              default: 0,
+              description: "Number of times this tag is used",
+            },
+          },
+        },
+        CreateCategoryInput: {
+          type: "object",
           required: ["name", "color"],
           properties: {
             name: {
               type: "string",
               minLength: 1,
               maxLength: 255,
-              description: "Tag name",
-            },
-            color: {
-              type: "string",
-              pattern: "^#[0-9A-Fa-f]{6}$",
-              description: "Hex color code for the tag",
-            },
-            count: {
-              type: "integer",
-              minimum: 0,
-              default: 0,
-              description: "Initial count for the tag",
-            },
-          },
-        },
-        CreateCategoryInput: {
-          type: "object",
-          required: ["name", "color", "icon"],
-          properties: {
-            name: {
-              type: "string",
-              minLength: 1,
-              maxLength: 255,
-              description: "Category name",
+              description: "Name of the category",
             },
             color: {
               type: "string",
               pattern: "^#[0-9A-Fa-f]{6}$",
               description: "Hex color code for the category",
             },
-            icon: {
-              type: "string",
-              minLength: 1,
-              maxLength: 50,
-              description: "Icon identifier for the category",
-            },
           },
         },
         ApiResponse: {
           type: "object",
-          required: ["success"],
           properties: {
             success: {
               type: "boolean",

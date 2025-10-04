@@ -7,7 +7,6 @@ export class CategoryRepository {
       data: {
         name: categoryData.name,
         color: categoryData.color,
-        icon: categoryData.icon,
       },
     });
     

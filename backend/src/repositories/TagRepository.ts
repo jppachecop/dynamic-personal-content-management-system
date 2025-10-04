@@ -6,7 +6,6 @@ export class TagRepository {
     const tag = await prisma.tag.create({
       data: {
         name: tagData.name,
-        color: tagData.color,
         count: tagData.count || 0,
       },
     });

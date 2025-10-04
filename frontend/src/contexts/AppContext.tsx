@@ -160,11 +160,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         // Initialize categories with defaults if needed - now using API
         if (categoryOps.categories.length === 0 && !categoryOps.isLoading) {
           const defaultCategories = [
-            { name: "Geral", color: "#3B82F6", icon: "📝" },
-            { name: "Trabalho", color: "#8B5CF6", icon: "💼" },
-            { name: "Pessoal", color: "#10B981", icon: "🏠" },
-            { name: "Ideias", color: "#F59E0B", icon: "💡" },
-            { name: "Projetos", color: "#EF4444", icon: "🚀" },
+            { name: "Geral", color: "#3B82F6" },
+            { name: "Trabalho", color: "#8B5CF6" },
+            { name: "Pessoal", color: "#10B981" },
+            { name: "Ideias", color: "#F59E0B" },
+            { name: "Projetos", color: "#EF4444" },
           ];
 
           for (const categoryData of defaultCategories) {

@@ -29,11 +29,11 @@ const seedData = async (): Promise<void> => {
     // Create sample categories
     console.log("Creating sample categories...");
     const categories = [
-      { name: "Work", color: "#3B82F6", icon: "💼" },
-      { name: "Personal", color: "#10B981", icon: "👤" },
-      { name: "Ideas", color: "#F59E0B", icon: "💡" },
-      { name: "Learning", color: "#8B5CF6", icon: "📚" },
-      { name: "Projects", color: "#EF4444", icon: "🚀" },
+      { name: "Work", color: "#3B82F6" },
+      { name: "Personal", color: "#10B981" },
+      { name: "Ideas", color: "#F59E0B" },
+      { name: "Learning", color: "#8B5CF6" },
+      { name: "Projects", color: "#EF4444" },
     ];
 
     for (const category of categories) {
@@ -46,14 +46,14 @@ const seedData = async (): Promise<void> => {
     // Create sample tags
     console.log("Creating sample tags...");
     const tags = [
-      { name: "important", color: "#EF4444", count: 0 },
-      { name: "urgent", color: "#F59E0B", count: 0 },
-      { name: "meeting", color: "#3B82F6", count: 0 },
-      { name: "todo", color: "#10B981", count: 0 },
-      { name: "research", color: "#8B5CF6", count: 0 },
-      { name: "brainstorm", color: "#F97316", count: 0 },
-      { name: "review", color: "#06B6D4", count: 0 },
-      { name: "follow-up", color: "#84CC16", count: 0 },
+      { name: "important", count: 0 },
+      { name: "urgent", count: 0 },
+      { name: "meeting", count: 0 },
+      { name: "todo", count: 0 },
+      { name: "research", count: 0 },
+      { name: "brainstorm", count: 0 },
+      { name: "review", count: 0 },
+      { name: "follow-up", count: 0 },
     ];
 
     for (const tag of tags) {

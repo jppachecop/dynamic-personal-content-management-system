@@ -22,7 +22,6 @@ export interface Note {
 export interface Tag {
   id: string;
   name: string;
-  color: string;
   count: number;
 }
 
@@ -30,7 +29,6 @@ export interface Category {
   id: string;
   name: string;
   color: string;
-  icon: string;
 }
 
 export type ViewMode = 'grid' | 'list';

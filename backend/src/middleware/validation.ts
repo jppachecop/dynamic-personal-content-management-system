@@ -98,16 +98,13 @@ export const validateUpdateNote = [
 ];
 
 // Tag validation rules
-export const validateCreateTag = [
+export const createTagValidation = [
   body("name")
     .trim()
     .notEmpty()
     .withMessage("Name is required")
     .isLength({ min: 1, max: 255 })
     .withMessage("Name must be between 1 and 255 characters"),
-  body("color")
-    .matches(/^#[0-9A-Fa-f]{6}$/)
-    .withMessage("Color must be a valid hex color"),
   body("count")
     .optional()
     .isInt({ min: 0 })
@@ -124,10 +121,6 @@ export const validateUpdateTag = [
     .withMessage("Name cannot be empty")
     .isLength({ min: 1, max: 255 })
     .withMessage("Name must be between 1 and 255 characters"),
-  body("color")
-    .optional()
-    .matches(/^#[0-9A-Fa-f]{6}$/)
-    .withMessage("Color must be a valid hex color"),
   body("count")
     .optional()
     .isInt({ min: 0 })
@@ -146,12 +139,6 @@ export const validateCreateCategory = [
   body("color")
     .matches(/^#[0-9A-Fa-f]{6}$/)
     .withMessage("Color must be a valid hex color"),
-  body("icon")
-    .trim()
-    .notEmpty()
-    .withMessage("Icon is required")
-    .isLength({ min: 1, max: 50 })
-    .withMessage("Icon must be between 1 and 50 characters"),
   handleValidationErrors,
 ];
 
@@ -168,13 +155,6 @@ export const validateUpdateCategory = [
     .optional()
     .matches(/^#[0-9A-Fa-f]{6}$/)
     .withMessage("Color must be a valid hex color"),
-  body("icon")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("Icon cannot be empty")
-    .isLength({ min: 1, max: 50 })
-    .withMessage("Icon must be between 1 and 50 characters"),
   handleValidationErrors,
 ];
 

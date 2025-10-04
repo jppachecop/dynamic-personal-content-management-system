@@ -10,7 +10,7 @@ export interface User {
 export interface Note {
   id: string;
   title: string;
-  content: string;
+  content: string | null;
   tags: string[];
   category: string;
   userId: string;
@@ -22,7 +22,6 @@ export interface Note {
 export interface Tag {
   id: string;
   name: string;
-  color: string;
   count: number;
 }
 
@@ -30,7 +29,6 @@ export interface Category {
   id: string;
   name: string;
   color: string;
-  icon: string;
 }
 
 
