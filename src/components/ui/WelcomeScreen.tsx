@@ -50,7 +50,6 @@ export const WelcomeScreen: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-bg flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
-        {/* Header */}
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4 shadow-primary">
             <BookOpen className="h-8 w-8 text-primary-foreground" />
@@ -64,7 +63,6 @@ export const WelcomeScreen: React.FC = () => {
           </p>
         </div>
 
-        {/* Auth Forms */}
         <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="text-center text-xl">Bem-vindo</CardTitle>
@@ -161,7 +159,6 @@ export const WelcomeScreen: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Features Preview */}
         <div className="text-center text-sm text-muted-foreground">
           <p>✨ Organize suas notas • 🏷️ Sistema de tags • 🔍 Busca avançada</p>
         </div>

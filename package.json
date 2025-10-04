@@ -1,8 +1,27 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "sgcpd-dynamic-personal-content-management-system",
+  "description": "Sistema moderno e responsivo para gerenciamento inteligente de notas pessoais",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "keywords": [
+    "notes",
+    "personal-management",
+    "react",
+    "typescript",
+    "tailwind",
+    "indexeddb"
+  ],
+  "author": "Seu Nome <seu-email@exemplo.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/dynamic-personal-content-management-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seu-usuario/dynamic-personal-content-management-system/issues"
+  },
+  "homepage": "https://github.com/seu-usuario/dynamic-personal-content-management-system#readme",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
