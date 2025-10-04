@@ -19,6 +19,7 @@ import { useIndexedDB } from "@/hooks/useIndexedDB";
 import { toast } from "@/hooks/use-toast";
 import { useUserOperations } from "@/hooks/useUsersAPI";
 import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
+import { useTagOperations } from "@/hooks/useTagsAPI";
 
 type AppAction =
   | { type: "SET_LOADING"; payload: boolean }
@@ -144,6 +145,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const db = useIndexedDB();
   const userOps = useUserOperations();
   const categoryOps = useCategoryOperations();
+  const tagOps = useTagOperations();
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -172,12 +174,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           }
         }
 
-        // Load tags (still using IndexedDB for now)
-        const allTags = await db.getAllTags();
-
-        // Update state with current data
+        // Update state with current data - now using API for both categories and tags
         dispatch({ type: "SET_CATEGORIES", payload: categoryOps.categories });
-        dispatch({ type: "SET_TAGS", payload: allTags });
+        dispatch({ type: "SET_TAGS", payload: tagOps.tags });
 
         // Handle saved user - now using API
         const savedUserId = localStorage.getItem("currentUserId");
@@ -211,8 +210,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     db.isInitialized, 
     userOps.isLoading, 
     categoryOps.isLoading,
+    tagOps.isLoading,
     userOps.users.length,
-    categoryOps.categories.length
+    categoryOps.categories.length,
+    tagOps.tags.length
   ]);
 
   const createUser = async (
