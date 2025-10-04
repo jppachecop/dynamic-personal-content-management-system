@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { ApiResponse } from '../types';
+import { Request, Response, NextFunction } from "express";
+import { ApiResponse } from "../types";
 
 export interface AppError extends Error {
   statusCode?: number;
@@ -8,41 +8,41 @@ export interface AppError extends Error {
 
 export const errorHandler = (
   error: AppError,
-  req: Request,
+  _req: Request,
   res: Response<ApiResponse>,
-  next: NextFunction
+  _next: NextFunction
 ): void => {
   let statusCode = error.statusCode || 500;
-  let message = error.message || 'Internal Server Error';
+  let message = error.message || "Internal Server Error";
 
   // PostgreSQL specific errors
-  if (error.message.includes('duplicate key value')) {
+  if (error.message.includes("duplicate key value")) {
     statusCode = 409;
-    message = 'Resource already exists';
-  } else if (error.message.includes('foreign key constraint')) {
+    message = "Resource already exists";
+  } else if (error.message.includes("foreign key constraint")) {
     statusCode = 400;
-    message = 'Invalid reference to related resource';
-  } else if (error.message.includes('not found')) {
+    message = "Invalid reference to related resource";
+  } else if (error.message.includes("not found")) {
     statusCode = 404;
-    message = 'Resource not found';
+    message = "Resource not found";
   }
 
   // Log error for debugging
   if (statusCode >= 500) {
-    console.error('Server Error:', error);
+    console.error("Server Error:", error);
   }
 
   res.status(statusCode).json({
     success: false,
     error: message,
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
+    ...(process.env["NODE_ENV"] === "development" && { stack: error.stack }),
   });
 };
 
 export const notFoundHandler = (
   req: Request,
-  res: Response<ApiResponse>,
-  next: NextFunction
+  res: Response,
+  _next: NextFunction
 ): void => {
   res.status(404).json({
     success: false,
@@ -51,9 +51,13 @@ export const notFoundHandler = (
 };
 
 export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>
 ) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };

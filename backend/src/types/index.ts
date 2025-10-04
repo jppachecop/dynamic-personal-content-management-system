@@ -2,7 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  avatar: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -47,7 +47,7 @@ export type UpdateTagInput = Partial<Tag>;
 export type UpdateCategoryInput = Partial<Category>;
 
 // API Response types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
