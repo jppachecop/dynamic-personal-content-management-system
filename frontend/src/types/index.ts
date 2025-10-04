@@ -10,7 +10,7 @@ export interface User {
 export interface Note {
   id: string;
   title: string;
-  content: string;
+  content: string | null;
   tags: string[];
   category: string;
   userId: string;
