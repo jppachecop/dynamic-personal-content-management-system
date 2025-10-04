@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { useApp } from '@/contexts/AppContext';
-import { useScreenSize } from '@/hooks/use-mobile';
-import { Note } from '@/types';
+import React, { useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { useApp } from "@/contexts/AppContext";
+import { useScreenSize } from "@/hooks/use-mobile";
+import { Note } from "@/types";
 import {
   Search,
   Plus,
@@ -13,20 +13,15 @@ import {
   MoreVertical,
   Calendar,
   Tag,
-  FileText
-} from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
+  FileText,
+} from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 export const NotesList: React.FC = () => {
-  const {
-    state,
-    createNote,
-    selectNote,
-    setSearchQuery,
-    deleteNote
-  } = useApp();
+  const { state, createNote, selectNote, setSearchQuery, deleteNote } =
+    useApp();
 
   const { isMobile } = useScreenSize();
 
@@ -36,7 +31,7 @@ export const NotesList: React.FC = () => {
     searchQuery,
     selectedCategory,
     selectedTags,
-    categories
+    categories,
   } = state;
 
   const filteredNotes = useMemo(() => {
@@ -44,40 +39,50 @@ export const NotesList: React.FC = () => {
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(note =>
-        note.title.toLowerCase().includes(query) ||
-        note.content.toLowerCase().includes(query) ||
-        note.tags.some(tag => tag.toLowerCase().includes(query))
+      filtered = filtered.filter(
+        (note) =>
+          note.title.toLowerCase().includes(query) ||
+          note.content.toLowerCase().includes(query) ||
+          note.tags.some((tag) => tag.toLowerCase().includes(query))
       );
     }
 
     if (selectedCategory) {
-      filtered = filtered.filter(note => note.category === selectedCategory);
+      if (selectedCategory === "Favoritas") {
+        filtered = filtered.filter((note) => note.isFavorite);
+      } else {
+        filtered = filtered.filter(
+          (note) => note.category === selectedCategory
+        );
+      }
     }
 
     if (selectedTags.length > 0) {
-      filtered = filtered.filter(note =>
-        selectedTags.some(tag => note.tags.includes(tag))
+      filtered = filtered.filter((note) =>
+        selectedTags.some((tag) => note.tags.includes(tag))
       );
     }
 
-    filtered.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    filtered.sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
 
     return filtered;
   }, [notes, searchQuery, selectedCategory, selectedTags]);
 
   const handleNewNote = () => {
-    createNote('Nova Nota');
+    createNote("Nova Nota");
   };
 
   const getCategoryColor = (categoryName: string) => {
-    const category = categories.find(cat => cat.name === categoryName);
-    return category?.color || '#3B82F6';
+    const category = categories.find((cat) => cat.name === categoryName);
+    return category?.color || "#3B82F6";
   };
 
   const truncateContent = (content: string, maxLength: number = 100) => {
     if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength) + '...';
+    return content.substring(0, maxLength) + "...";
   };
 
   return (
@@ -86,7 +91,7 @@ export const NotesList: React.FC = () => {
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">
-              {selectedCategory || 'Todas as Notas'}
+              {selectedCategory || "Todas as Notas"}
             </h2>
             <Button
               size="sm"
@@ -123,21 +128,17 @@ export const NotesList: React.FC = () => {
         </div>
       )}
 
-      <div className={cn(
-        "flex-1 overflow-y-auto",
-        isMobile ? "p-2" : "p-2"
-      )}>
+      <div className={cn("flex-1 overflow-y-auto", isMobile ? "p-2" : "p-2")}>
         {filteredNotes.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-8">
             <FileText className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium text-foreground mb-2">
-              {searchQuery ? 'Nenhuma nota encontrada' : 'Nenhuma nota ainda'}
+              {searchQuery ? "Nenhuma nota encontrada" : "Nenhuma nota ainda"}
             </h3>
             <p className="text-muted-foreground mb-4">
               {searchQuery
-                ? 'Tente alterar os termos de busca.'
-                : 'Crie sua primeira nota para começar!'
-              }
+                ? "Tente alterar os termos de busca."
+                : "Crie sua primeira nota para começar!"}
             </p>
             {!searchQuery && (
               <Button
@@ -159,31 +160,31 @@ export const NotesList: React.FC = () => {
                   selectedNote?.id === note.id
                     ? "bg-primary/5 border-primary shadow-primary/20"
                     : "hover:bg-muted/50",
-                  isMobile && "active:scale-[0.98]" 
+                  isMobile && "active:scale-[0.98]"
                 )}
                 style={{
-                  borderLeftColor: getCategoryColor(note.category)
+                  borderLeftColor: getCategoryColor(note.category),
                 }}
                 onClick={() => selectNote(note)}
                 role="button"
                 tabIndex={0}
-                aria-label={`Abrir nota: ${note.title || 'Sem título'}`}
+                aria-label={`Abrir nota: ${note.title || "Sem título"}`}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     selectNote(note);
                   }
                 }}
               >
-                <CardContent className={cn(
-                  isMobile ? "p-3" : "p-4"
-                )}>
+                <CardContent className={cn(isMobile ? "p-3" : "p-4")}>
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className={cn(
-                      "font-medium text-foreground line-clamp-1 flex-1",
-                      isMobile ? "text-base" : "text-sm"
-                    )}>
-                      {note.title || 'Sem título'}
+                    <h3
+                      className={cn(
+                        "font-medium text-foreground line-clamp-1 flex-1",
+                        isMobile ? "text-base" : "text-sm"
+                      )}
+                    >
+                      {note.title || "Sem título"}
                     </h3>
                     <div className="flex items-center gap-1 ml-2">
                       {note.isFavorite && (
@@ -205,10 +206,12 @@ export const NotesList: React.FC = () => {
                   </div>
 
                   {note.content && (
-                    <p className={cn(
-                      "text-muted-foreground line-clamp-2 mb-3",
-                      isMobile ? "text-sm" : "text-xs"
-                    )}>
+                    <p
+                      className={cn(
+                        "text-muted-foreground line-clamp-2 mb-3",
+                        isMobile ? "text-sm" : "text-xs"
+                      )}
+                    >
                       {truncateContent(note.content)}
                     </p>
                   )}
@@ -219,7 +222,7 @@ export const NotesList: React.FC = () => {
                       <span>
                         {formatDistanceToNow(new Date(note.updatedAt), {
                           addSuffix: true,
-                          locale: ptBR
+                          locale: ptBR,
                         })}
                       </span>
                     </div>

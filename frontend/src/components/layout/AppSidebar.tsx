@@ -1,8 +1,8 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { useApp } from '@/contexts/AppContext';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { useApp } from "@/contexts/AppContext";
 import {
   Menu,
   Plus,
@@ -10,32 +10,36 @@ import {
   Star,
   Folder,
   Settings,
-  LogOut
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+  LogOut,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const AppSidebar: React.FC = () => {
-  const { state, toggleSidebar, createNote, logoutUser, setSelectedCategory } = useApp();
-  const { sidebarOpen, currentUser, categories, notes, selectedCategory } = state;
+  const { state, toggleSidebar, createNote, logoutUser, setSelectedCategory } =
+    useApp();
+  const { sidebarOpen, currentUser, categories, notes, selectedCategory } =
+    state;
 
   if (!currentUser) return null;
 
   const handleNewNote = () => {
-    createNote('Nova Nota');
+    createNote("Nova Nota");
   };
 
-  const categoryCounts = categories.map(category => ({
+  const categoryCounts = categories.map((category) => ({
     ...category,
-    count: notes.filter(note => note.category === category.name).length
+    count: notes.filter((note) => note.category === category.name).length,
   }));
 
-  const favoriteCount = notes.filter(note => note.isFavorite).length;
+  const favoriteCount = notes.filter((note) => note.isFavorite).length;
 
   return (
-    <div className={cn(
-      "h-full bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300",
-      sidebarOpen ? "w-80" : "w-16"
-    )}>
+    <div
+      className={cn(
+        "h-full bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300",
+        sidebarOpen ? "w-80" : "w-16"
+      )}
+    >
       <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <Button
@@ -108,6 +112,7 @@ export const AppSidebar: React.FC = () => {
               "justify-start transition-colors",
               sidebarOpen ? "w-full" : "w-full p-2"
             )}
+            onClick={() => setSelectedCategory("Favoritas")}
           >
             <Star className="h-4 w-4" />
             {sidebarOpen && (
@@ -131,11 +136,16 @@ export const AppSidebar: React.FC = () => {
                 {categoryCounts.map((category) => (
                   <Button
                     key={category.id}
-                    variant={selectedCategory === category.name ? "secondary" : "ghost"}
+                    variant={
+                      selectedCategory === category.name ? "secondary" : "ghost"
+                    }
                     className="w-full justify-start transition-colors"
                     onClick={() => setSelectedCategory(category.name)}
                   >
-                    <Folder className="h-4 w-4" style={{ color: category.color }} />
+                    <Folder
+                      className="h-4 w-4"
+                      style={{ color: category.color }}
+                    />
                     <span className="ml-2">{category.name}</span>
                     {category.count > 0 && (
                       <Badge variant="secondary" className="ml-auto">
