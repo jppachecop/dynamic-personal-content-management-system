@@ -5,12 +5,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useApp } from '@/contexts/AppContext';
+import { useScreenSize } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 import { Note } from '@/types';
-import { 
-  Star, 
-  Tag, 
-  Save, 
-  Trash2, 
+import {
+  Star,
+  Tag,
+  Save,
+  Trash2,
   Plus,
   X,
   Calendar,
@@ -18,23 +20,22 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
 
 export const NoteEditor: React.FC = () => {
-  const { 
-    state, 
-    updateNote, 
-    deleteNote, 
-    selectNote 
+  const {
+    state,
+    updateNote,
+    deleteNote,
+    selectNote
   } = useApp();
-  
+
+  const { isMobile } = useScreenSize();
   const { selectedNote, categories } = state;
   const [editedNote, setEditedNote] = useState<Note | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [newTag, setNewTag] = useState('');
   const [isAddingTag, setIsAddingTag] = useState(false);
 
-  // Update edited note when selected note changes
   useEffect(() => {
     if (selectedNote) {
       setEditedNote({ ...selectedNote });
@@ -45,7 +46,17 @@ export const NoteEditor: React.FC = () => {
     }
   }, [selectedNote]);
 
-  // Auto-save when changes are detected
+  const handleSave = useCallback(async () => {
+    if (!editedNote) return;
+
+    try {
+      await updateNote(editedNote);
+      setHasChanges(false);
+    } catch (error) {
+      console.error('Failed to save note:', error);
+    }
+  }, [editedNote, updateNote]);
+
   const debouncedSave = useCallback(() => {
     const timeoutId = setTimeout(() => {
       if (editedNote && hasChanges) {
@@ -54,7 +65,7 @@ export const NoteEditor: React.FC = () => {
     }, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, [editedNote, hasChanges]);
+  }, [editedNote, hasChanges, handleSave]);
 
   useEffect(() => {
     if (hasChanges) {
@@ -63,29 +74,18 @@ export const NoteEditor: React.FC = () => {
     }
   }, [hasChanges, debouncedSave]);
 
-  const handleSave = async () => {
-    if (!editedNote) return;
-    
-    try {
-      await updateNote(editedNote);
-      setHasChanges(false);
-    } catch (error) {
-      console.error('Failed to save note:', error);
-    }
-  };
-
   const handleDelete = async () => {
     if (!editedNote) return;
-    
+
     if (window.confirm('Tem certeza que deseja excluir esta nota?')) {
       await deleteNote(editedNote.id);
       selectNote(null);
     }
   };
 
-  const handleFieldChange = (field: keyof Note, value: any) => {
+  const handleFieldChange = (field: keyof Note, value: string | boolean | string[]) => {
     if (!editedNote) return;
-    
+
     setEditedNote({
       ...editedNote,
       [field]: value,
@@ -95,12 +95,12 @@ export const NoteEditor: React.FC = () => {
 
   const handleAddTag = () => {
     if (!editedNote || !newTag.trim()) return;
-    
+
     const tag = newTag.trim();
     if (!editedNote.tags.includes(tag)) {
       handleFieldChange('tags', [...editedNote.tags, tag]);
     }
-    
+
     setNewTag('');
     setIsAddingTag(false);
   };
@@ -140,71 +140,90 @@ export const NoteEditor: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col bg-background">
-      {/* Header */}
-      <div className="p-4 border-b border-border bg-card">
+      <div className={cn(
+        "border-b border-border bg-card",
+        isMobile ? "p-3" : "p-4"
+      )}>
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div 
-              className="w-1 h-6 rounded-full"
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <div
+              className="w-1 h-6 rounded-full flex-shrink-0"
               style={{ backgroundColor: getCategoryColor(editedNote.category) }}
             />
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground truncate">
               {editedNote.category}
             </div>
           </div>
-          
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center gap-1 flex-shrink-0">
             <Button
               variant="ghost"
               size="icon"
               onClick={toggleFavorite}
               className={cn(
                 "transition-colors",
-                editedNote.isFavorite 
-                  ? "text-warning hover:text-warning/80" 
-                  : "text-muted-foreground hover:text-warning"
+                editedNote.isFavorite
+                  ? "text-warning hover:text-warning/80"
+                  : "text-muted-foreground hover:text-warning",
+                isMobile && "h-8 w-8"
               )}
+              aria-label={editedNote.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
             >
               <Star className={cn("h-4 w-4", editedNote.isFavorite && "fill-current")} />
             </Button>
-            
+
             <Button
               variant="ghost"
               size="icon"
               onClick={handleSave}
               disabled={!hasChanges}
-              className="text-accent hover:text-accent/80 disabled:opacity-50"
+              className={cn(
+                "text-accent hover:text-accent/80 disabled:opacity-50",
+                isMobile && "h-8 w-8"
+              )}
+              aria-label="Salvar nota"
             >
               <Save className="h-4 w-4" />
             </Button>
-            
+
             <Button
               variant="ghost"
               size="icon"
               onClick={handleDelete}
-              className="text-destructive hover:text-destructive/80"
+              className={cn(
+                "text-destructive hover:text-destructive/80",
+                isMobile && "h-8 w-8"
+              )}
+              aria-label="Excluir nota"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        {/* Category Selection */}
-        <div className="flex items-center gap-4 mb-4">
-          <div className="flex items-center gap-2">
-            <Folder className="h-4 w-4 text-muted-foreground" />
+        <div className={cn(
+          "flex items-center mb-4",
+          isMobile ? "flex-col gap-3" : "gap-4"
+        )}>
+          <div className={cn(
+            "flex items-center gap-2",
+            isMobile && "w-full"
+          )}>
+            <Folder className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Select
               value={editedNote.category}
               onValueChange={(value) => handleFieldChange('category', value)}
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className={cn(
+                isMobile ? "w-full" : "w-40"
+              )}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.name}>
                     <div className="flex items-center gap-2">
-                      <div 
+                      <div
                         className="w-2 h-2 rounded-full"
                         style={{ backgroundColor: category.color }}
                       />
@@ -215,50 +234,64 @@ export const NoteEditor: React.FC = () => {
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4" />
+
+          <div className={cn(
+            "flex items-center gap-2 text-muted-foreground",
+            isMobile ? "w-full justify-start text-xs" : "text-sm"
+          )}>
+            <Calendar className="h-4 w-4 flex-shrink-0" />
             <span>
-              Atualizada {formatDistanceToNow(new Date(editedNote.updatedAt), { 
-                addSuffix: true, 
-                locale: ptBR 
+              Atualizada {formatDistanceToNow(new Date(editedNote.updatedAt), {
+                addSuffix: true,
+                locale: ptBR
               })}
             </span>
           </div>
         </div>
 
-        {/* Title */}
         <Input
           value={editedNote.title}
           onChange={(e) => handleFieldChange('title', e.target.value)}
           placeholder="Título da nota..."
-          className="text-xl font-bold border-none p-0 h-auto bg-transparent focus:ring-0 focus:border-none shadow-none"
+          className={cn(
+            "font-bold border-none p-0 h-auto bg-transparent focus:ring-0 focus:border-none shadow-none",
+            isMobile ? "text-lg" : "text-xl"
+          )}
         />
       </div>
 
-      {/* Tags */}
-      <div className="p-4 border-b border-border bg-card">
+      <div className={cn(
+        "border-b border-border bg-card",
+        isMobile ? "p-3" : "p-4"
+      )}>
         <div className="flex items-center gap-2 flex-wrap">
-          <Tag className="h-4 w-4 text-muted-foreground" />
-          
+          <Tag className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+
           {editedNote.tags.map((tag) => (
-            <Badge 
-              key={tag} 
-              variant="secondary" 
-              className="flex items-center gap-1"
+            <Badge
+              key={tag}
+              variant="secondary"
+              className={cn(
+                "flex items-center gap-1",
+                isMobile && "text-xs"
+              )}
             >
               {tag}
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-3 w-3 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                className={cn(
+                  "p-0 hover:bg-destructive hover:text-destructive-foreground",
+                  isMobile ? "h-3 w-3" : "h-3 w-3"
+                )}
                 onClick={() => handleRemoveTag(tag)}
+                aria-label={`Remover tag ${tag}`}
               >
                 <X className="h-2 w-2" />
               </Button>
             </Badge>
           ))}
-          
+
           {isAddingTag ? (
             <div className="flex items-center gap-1">
               <Input
@@ -274,14 +307,21 @@ export const NoteEditor: React.FC = () => {
                   }
                 }}
                 placeholder="Nova tag..."
-                className="h-6 text-xs w-24"
+                className={cn(
+                  "h-6 text-xs",
+                  isMobile ? "w-20" : "w-24"
+                )}
                 autoFocus
               />
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-5 w-5 p-0"
+                className={cn(
+                  "p-0",
+                  isMobile ? "h-4 w-4" : "h-5 w-5"
+                )}
                 onClick={handleAddTag}
+                aria-label="Adicionar tag"
               >
                 <Plus className="h-3 w-3" />
               </Button>
@@ -290,7 +330,10 @@ export const NoteEditor: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 px-2 text-xs"
+              className={cn(
+                "px-2 text-xs",
+                isMobile ? "h-5" : "h-6"
+              )}
               onClick={() => setIsAddingTag(true)}
             >
               <Plus className="h-3 w-3 mr-1" />
@@ -300,19 +343,26 @@ export const NoteEditor: React.FC = () => {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 p-4">
+      <div className={cn(
+        "flex-1",
+        isMobile ? "p-3" : "p-4"
+      )}>
         <Textarea
           value={editedNote.content}
           onChange={(e) => handleFieldChange('content', e.target.value)}
           placeholder="Comece a escrever sua nota aqui..."
-          className="h-full resize-none border-none p-0 bg-transparent focus:ring-0 shadow-none text-base"
+          className={cn(
+            "h-full resize-none border-none p-0 bg-transparent focus:ring-0 shadow-none",
+            isMobile ? "text-sm" : "text-base"
+          )}
         />
       </div>
 
-      {/* Status Bar */}
       {hasChanges && (
-        <div className="px-4 py-2 bg-muted/50 border-t text-xs text-muted-foreground">
+        <div className={cn(
+          "bg-muted/50 border-t text-muted-foreground",
+          isMobile ? "px-3 py-2 text-xs" : "px-4 py-2 text-xs"
+        )}>
           Salvando automaticamente...
         </div>
       )}

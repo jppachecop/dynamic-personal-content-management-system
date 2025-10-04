@@ -27,13 +27,11 @@ class IndexedDBManager {
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
 
-        // Users store
         if (!db.objectStoreNames.contains(STORES.USERS)) {
           const userStore = db.createObjectStore(STORES.USERS, { keyPath: 'id' });
           userStore.createIndex('email', 'email', { unique: true });
         }
 
-        // Notes store
         if (!db.objectStoreNames.contains(STORES.NOTES)) {
           const noteStore = db.createObjectStore(STORES.NOTES, { keyPath: 'id' });
           noteStore.createIndex('userId', 'userId', { unique: false });
@@ -42,12 +40,10 @@ class IndexedDBManager {
           noteStore.createIndex('updatedAt', 'updatedAt', { unique: false });
         }
 
-        // Tags store
         if (!db.objectStoreNames.contains(STORES.TAGS)) {
           db.createObjectStore(STORES.TAGS, { keyPath: 'id' });
         }
 
-        // Categories store
         if (!db.objectStoreNames.contains(STORES.CATEGORIES)) {
           db.createObjectStore(STORES.CATEGORIES, { keyPath: 'id' });
         }
@@ -152,7 +148,6 @@ export const useIndexedDB = () => {
     initDB();
   }, [dbManager]);
 
-  // User operations
   const createUser = useCallback(async (userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => {
     const user: User = {
       ...userData,
@@ -180,7 +175,6 @@ export const useIndexedDB = () => {
     return dbManager.delete(STORES.USERS, id);
   }, [dbManager]);
 
-  // Note operations
   const createNote = useCallback(async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => {
     const note: Note = {
       ...noteData,
@@ -212,7 +206,6 @@ export const useIndexedDB = () => {
     return dbManager.delete(STORES.NOTES, id);
   }, [dbManager]);
 
-  // Tag operations
   const createTag = useCallback(async (tagData: Omit<Tag, 'id'>) => {
     const tag: Tag = {
       ...tagData,
@@ -233,7 +226,6 @@ export const useIndexedDB = () => {
     return dbManager.delete(STORES.TAGS, id);
   }, [dbManager]);
 
-  // Category operations
   const createCategory = useCallback(async (categoryData: Omit<Category, 'id'>) => {
     const category: Category = {
       ...categoryData,
@@ -256,25 +248,21 @@ export const useIndexedDB = () => {
 
   return {
     isInitialized,
-    // User operations
     createUser,
     getUser,
     getAllUsers,
     updateUser,
     deleteUser,
-    // Note operations
     createNote,
     getNote,
     getAllNotes,
     getNotesByUser,
     updateNote,
     deleteNote,
-    // Tag operations
     createTag,
     getAllTags,
     updateTag,
     deleteTag,
-    // Category operations
     createCategory,
     getAllCategories,
     updateCategory,

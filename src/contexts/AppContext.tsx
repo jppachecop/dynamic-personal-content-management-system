@@ -89,20 +89,16 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 interface AppContextType {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
-  // User actions
   createUser: (userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   loginUser: (email: string) => Promise<void>;
   logoutUser: () => void;
-  // Note actions
   createNote: (title: string, content?: string) => Promise<void>;
   updateNote: (note: Note) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
   selectNote: (note: Note | null) => void;
-  // Filter actions
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string | null) => void;
   setSelectedTags: (tags: string[]) => void;
-  // View actions
   toggleSidebar: () => void;
 }
 
@@ -124,7 +120,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const db = useIndexedDB();
 
-  // Initialize app data
   useEffect(() => {
     const initializeApp = async () => {
       if (!db.isInitialized) return;
@@ -132,7 +127,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       try {
         dispatch({ type: 'SET_LOADING', payload: true });
 
-        // Load default categories if none exist
         const categories = await db.getAllCategories();
         if (categories.length === 0) {
           const defaultCategories = [
@@ -148,7 +142,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           }
         }
 
-        // Load all data
         const [allCategories, allTags] = await Promise.all([
           db.getAllCategories(),
           db.getAllTags(),
@@ -157,7 +150,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         dispatch({ type: 'SET_CATEGORIES', payload: allCategories });
         dispatch({ type: 'SET_TAGS', payload: allTags });
 
-        // Try to get saved user from localStorage
         const savedUserId = localStorage.getItem('currentUserId');
         if (savedUserId) {
           const user = await db.getUser(savedUserId);
@@ -184,7 +176,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     initializeApp();
   }, [db.isInitialized]);
 
-  // User actions
   const createUser = async (userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       const user = await db.createUser(userData);
@@ -246,7 +237,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     });
   };
 
-  // Note actions
   const createNote = async (title: string, content: string = '') => {
     if (!state.currentUser) return;
 
@@ -314,7 +304,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: 'SET_SELECTED_NOTE', payload: note });
   };
 
-  // Filter actions
   const setSearchQuery = (query: string) => {
     dispatch({ type: 'SET_SEARCH_QUERY', payload: query });
   };
@@ -327,7 +316,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: 'SET_SELECTED_TAGS', payload: tags });
   };
 
-  // View actions
   const toggleSidebar = () => {
     dispatch({ type: 'TOGGLE_SIDEBAR' });
   };

@@ -3,16 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useApp } from '@/contexts/AppContext';
-import { 
-  Menu, 
-  Plus, 
-  Search, 
-  Star, 
-  Tag, 
-  Folder, 
-  Settings, 
-  LogOut,
-  User
+import {
+  Menu,
+  Plus,
+  Search,
+  Star,
+  Folder,
+  Settings,
+  LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -38,7 +36,6 @@ export const AppSidebar: React.FC = () => {
       "h-full bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300",
       sidebarOpen ? "w-80" : "w-16"
     )}>
-      {/* Header */}
       <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <Button
@@ -49,7 +46,7 @@ export const AppSidebar: React.FC = () => {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          
+
           {sidebarOpen && (
             <>
               <Avatar className="h-8 w-8">
@@ -71,9 +68,8 @@ export const AppSidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="p-4 border-b border-sidebar-border">
-        <Button 
+        <Button
           onClick={handleNewNote}
           className={cn(
             "bg-gradient-primary hover:shadow-primary transition-all",
@@ -85,10 +81,8 @@ export const AppSidebar: React.FC = () => {
         </Button>
       </div>
 
-      {/* Navigation */}
       <div className="flex-1 overflow-y-auto p-2">
         <div className="space-y-1">
-          {/* All Notes */}
           <Button
             variant={!selectedCategory ? "secondary" : "ghost"}
             className={cn(
@@ -108,7 +102,6 @@ export const AppSidebar: React.FC = () => {
             )}
           </Button>
 
-          {/* Favorites */}
           <Button
             variant="ghost"
             className={cn(
@@ -129,7 +122,6 @@ export const AppSidebar: React.FC = () => {
             )}
           </Button>
 
-          {/* Categories */}
           {sidebarOpen && (
             <div className="pt-4">
               <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -158,7 +150,6 @@ export const AppSidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="p-2 border-t border-sidebar-border">
         <div className="space-y-1">
           <Button
@@ -171,7 +162,7 @@ export const AppSidebar: React.FC = () => {
             <Settings className="h-4 w-4" />
             {sidebarOpen && <span className="ml-2">Configurações</span>}
           </Button>
-          
+
           <Button
             variant="ghost"
             onClick={logoutUser}
