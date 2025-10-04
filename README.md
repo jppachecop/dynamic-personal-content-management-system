@@ -1,20 +1,20 @@
 # 📝 SGCPD - Sistema de Gestão de Conteúdo Pessoal Dinâmico
-
 <div align="center">
 
 ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4.x-000000?style=for-the-badge&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16.x-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-5.x-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-5.4.19-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-_Sistema moderno e responsivo para gerenciamento inteligente de notas pessoais_
-
-[🚀 Demo](#-demonstração) • [⚡ Instalação](#-instalação-rápida) • [📖 Documentação](#-documentação) • [🤝 Contribuição](#-contribuição)
+_Sistema moderno e responsivo para gerenciamento inteligente de notas pessoais, construído com **React + TypeScript** (frontend) e **Node.js + Express + PostgreSQL + Prisma** (backend).
 
 </div>
 
 ---
-
 ## 🎯 **Visão Geral**
 
 O **SGCPD** é um sistema web moderno e intuitivo para gerenciamento de notas pessoais, desenvolvido com foco na **experiência do usuário**, **responsividade** e **performance**. O projeto combina tecnologias de ponta para oferecer uma solução completa de organização de conteúdo pessoal.
@@ -25,7 +25,9 @@ O **SGCPD** é um sistema web moderno e intuitivo para gerenciamento de notas pe
 - **📱 100% Responsivo**: Experiência otimizada para desktop, tablet e mobile
 - **⚡ Performance**: Desenvolvido com Vite e React 18 para máxima velocidade
 - **🎯 Acessibilidade**: Implementação completa de padrões WCAG
-- **💾 Armazenamento Local**: Dados persistidos localmente com IndexedDB
+- **💾 Persistência Robusta**: Dados armazenados em PostgreSQL com Prisma ORM
+- **🔌 API RESTful**: Backend completo com Express.js e documentação Swagger
+- **🔄 React Query**: Gerenciamento de estado e cache otimizado
 - **🔧 TypeScript**: Tipagem forte para maior confiabilidade do código
 
 ---

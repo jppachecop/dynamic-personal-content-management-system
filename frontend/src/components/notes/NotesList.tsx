@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -71,20 +71,20 @@ export const NotesList: React.FC = () => {
     return filtered;
   }, [notes, searchQuery, selectedCategory, selectedTags]);
 
-  const handleNewNote = () => {
+  const handleNewNote = useCallback(() => {
     createNote("Nova Nota");
-  };
+  }, [createNote]);
 
-  const getCategoryColor = (categoryName: string) => {
+  const getCategoryColor = useCallback((categoryName: string) => {
     const category = categories.find((cat) => cat.name === categoryName);
     return category?.color || "#3B82F6";
-  };
+  }, [categories]);
 
-  const truncateContent = (content: string | null, maxLength: number = 100) => {
+  const truncateContent = useCallback((content: string | null, maxLength: number = 100) => {
     if (!content) return "";
     if (content.length <= maxLength) return content;
     return content.substring(0, maxLength) + "...";
-  };
+  }, []);
 
   return (
     <div className="h-full flex flex-col bg-card">
