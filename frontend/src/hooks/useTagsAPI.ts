@@ -5,7 +5,7 @@ import { Tag } from "../types";
 
 /**
  * API-based Tags Hook
- * Replaces IndexedDB tags functionality with backend API calls
+ * Provides tag management functionality via backend API
  */
 
 // Get all tags

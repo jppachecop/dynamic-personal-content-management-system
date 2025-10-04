@@ -5,7 +5,7 @@ import { User } from "../types";
 
 /**
  * API-based Users Hook
- * Replaces IndexedDB users functionality with backend API calls
+ * Provides user management functionality via backend API
  */
 
 // Get all users

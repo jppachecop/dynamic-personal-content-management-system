@@ -42,7 +42,7 @@ export const NotesList: React.FC = () => {
       filtered = filtered.filter(
         (note) =>
           note.title.toLowerCase().includes(query) ||
-          note.content.toLowerCase().includes(query) ||
+          note.content?.toLowerCase().includes(query) ||
           note.tags.some((tag) => tag.toLowerCase().includes(query))
       );
     }
@@ -80,7 +80,8 @@ export const NotesList: React.FC = () => {
     return category?.color || "#3B82F6";
   };
 
-  const truncateContent = (content: string, maxLength: number = 100) => {
+  const truncateContent = (content: string | null, maxLength: number = 100) => {
+    if (!content) return "";
     if (content.length <= maxLength) return content;
     return content.substring(0, maxLength) + "...";
   };

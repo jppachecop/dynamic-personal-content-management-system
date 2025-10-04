@@ -1,6 +1,6 @@
 {
   "name": "sgcpd-dynamic-personal-content-management-system",
-  "description": "Sistema moderno e responsivo para gerenciamento inteligente de notas pessoais",
+  "description": "Sistema moderno e responsivo para gerenciamento inteligente de notas pessoais com backend API e PostgreSQL",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,8 @@
     "react",
     "typescript",
     "tailwind",
-    "indexeddb"
+    "api",
+    "postgresql"
   ],
   "author": "Seu Nome <seu-email@exemplo.com>",
   "license": "MIT",

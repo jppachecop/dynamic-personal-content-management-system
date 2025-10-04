@@ -15,7 +15,6 @@ import {
   SortBy,
   SortOrder,
 } from "@/types";
-import { useIndexedDB } from "@/hooks/useIndexedDB";
 import { toast } from "@/hooks/use-toast";
 import { useUserOperations } from "@/hooks/useUsersAPI";
 import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
@@ -143,7 +142,6 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const db = useIndexedDB();
   const userOps = useUserOperations();
   const categoryOps = useCategoryOperations();
   const tagOps = useTagOperations();
@@ -151,7 +149,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const initializeApp = async () => {
-      if (!db.isInitialized) return;
+      // Wait for API hooks to be ready
+      if (userOps.isLoading || categoryOps.isLoading || tagOps.isLoading || noteOps.isLoading) {
+        return;
+      }
 
       try {
         dispatch({ type: "SET_LOADING", payload: true });
@@ -210,7 +211,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     initializeApp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    db.isInitialized, 
     userOps.isLoading, 
     categoryOps.isLoading,
     tagOps.isLoading,
@@ -225,7 +225,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     userData: Omit<User, "id" | "createdAt" | "updatedAt">
   ) => {
     try {
-      // Use API instead of IndexedDB
+      // Use API
       const user = await userOps.createUser(userData);
       dispatch({ type: "SET_CURRENT_USER", payload: user });
       localStorage.setItem("currentUserId", user.id);
@@ -245,14 +245,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const loginUser = async (email: string) => {
     try {
-      // Use API instead of IndexedDB
+      // Use API
       const user = userOps.getUserByEmail(email);
 
       if (user) {
         dispatch({ type: "SET_CURRENT_USER", payload: user });
         localStorage.setItem("currentUserId", user.id);
-        const userNotes = await db.getNotesByUser(user.id);
-        dispatch({ type: "SET_NOTES", payload: userNotes });
+        // Load user notes from API
+        dispatch({ type: "SET_NOTES", payload: noteOps.notes });
         toast({
           title: "Login realizado",
           description: `Bem-vindo de volta, ${user.name}! (API)`,
@@ -285,7 +285,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     });
   };
 
-  const createNote = async (title: string, content: string = "") => {
+  const createNote = async (title: string, content: string | null = null) => {
     if (!state.currentUser) return;
 
     try {
@@ -298,7 +298,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         isFavorite: false,
       };
 
-      // Use API instead of IndexedDB
+      // Use API
       const note = await noteOps.createNote(noteData);
       dispatch({ type: "ADD_NOTE", payload: note });
       dispatch({ type: "SET_SELECTED_NOTE", payload: note });
@@ -319,7 +319,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const updateNote = async (note: Note) => {
     try {
-      // Use API instead of IndexedDB
+      // Use API
       const updatedNote = await noteOps.updateNote(note.id, {
         title: note.title,
         content: note.content,
@@ -340,7 +340,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const deleteNote = async (id: string) => {
     try {
-      // Use API instead of IndexedDB
+      // Use API
       await noteOps.deleteNote(id);
       dispatch({ type: "DELETE_NOTE", payload: id });
       toast({

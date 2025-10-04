@@ -5,7 +5,7 @@ import { Category } from "../types";
 
 /**
  * API-based Categories Hook
- * Replaces IndexedDB categories functionality with backend API calls
+ * Provides category management functionality via backend API
  */
 
 // Get all categories

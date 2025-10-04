@@ -5,7 +5,7 @@ import { Note } from "../types";
 
 /**
  * API-based Notes Hook
- * Replaces IndexedDB notes functionality with backend API calls
+ * Provides note management functionality via backend API
  */
 
 // Get all notes with optional filters
