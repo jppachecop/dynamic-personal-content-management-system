@@ -6,6 +6,7 @@ import compression from "compression";
 import dotenv from "dotenv";
 
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
+import { setupSwagger } from "./config/swagger";
 import usersRouter from "./routes/users";
 import notesRouter from "./routes/notes";
 import tagsRouter from "./routes/tags";
@@ -40,7 +41,36 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 // Compression middleware
 app.use(compression());
 
-// Health check endpoint
+// Setup Swagger documentation
+setupSwagger(app);
+
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Server is running
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Server is running"
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 environment:
+ *                   type: string
+ *                   example: "development"
+ */
 app.get("/health", (_, res) => {
   res.json({
     success: true,

@@ -8,7 +8,6 @@ A TypeScript + Express API with PostgreSQL database for managing users, notes, t
 - **Express.js**: Fast, unopinionated web framework
 - **PostgreSQL**: Reliable relational database with advanced features
 - **Prisma ORM**: Type-safe database access with auto-generated client
-- **Repository Pattern**: Clean separation of data access logic
 - **Input Validation**: Comprehensive request validation using express-validator
 - **Error Handling**: Centralized error handling with proper HTTP status codes
 - **CORS Support**: Configurable cross-origin resource sharing
@@ -16,10 +15,35 @@ A TypeScript + Express API with PostgreSQL database for managing users, notes, t
 - **Logging**: Morgan for HTTP request logging
 - **Compression**: Gzip compression for responses
 
-## 📋 Prerequisites
+## 📚 API Documentation
 
-- Node.js (v16 or higher)
-- PostgreSQL (v12 or higher)
+This API includes comprehensive Swagger/OpenAPI documentation that provides:
+
+- **Interactive API Explorer**: Test endpoints directly from the browser
+- **Complete Schema Definitions**: Detailed request/response models
+- **Authentication Examples**: Sample requests and responses
+- **Error Handling**: Comprehensive error response documentation
+
+### Accessing the Documentation
+
+Once the server is running, you can access the API documentation at:
+
+- **Swagger UI**: `http://localhost:3001/api-docs`
+- **JSON Spec**: `http://localhost:3001/api-docs.json`
+
+The documentation includes:
+- ✅ **Users API**: Complete CRUD operations for user management
+- ✅ **Notes API**: Full note management with search, filtering, and favorites
+- ✅ **Tags API**: Tag management with usage tracking and popularity
+- ✅ **Categories API**: Category management with usage statistics
+- ✅ **Health Check**: Server status and monitoring
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- PostgreSQL (v13 or higher)
 - npm or yarn
 
 ## 🛠️ Installation

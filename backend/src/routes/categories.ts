@@ -11,7 +11,68 @@ import { asyncHandler } from "../middleware/errorHandler";
 const router = Router();
 const categoryRepository = new CategoryRepository();
 
-// GET /api/categories - Get all categories
+/**
+ * @swagger
+ * /api/categories:
+ *   get:
+ *     summary: Get all categories with optional usage statistics
+ *     tags: [Categories]
+ *     parameters:
+ *       - name: withUsage
+ *         in: query
+ *         description: Include usage statistics for each category
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *     responses:
+ *       200:
+ *         description: List of categories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Category'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ *   post:
+ *     summary: Create a new category
+ *     tags: [Categories]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateCategoryInput'
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Category'
+ *                 message:
+ *                   type: string
+ *                   example: "Category created successfully"
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       409:
+ *         $ref: '#/components/responses/Conflict'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.get(
   "/",
   asyncHandler(async (req: Request, res: Response<ApiResponse>) => {

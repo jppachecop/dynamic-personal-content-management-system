@@ -11,7 +11,44 @@ import { asyncHandler } from "../middleware/errorHandler";
 const router = Router();
 const tagRepository = new TagRepository();
 
-// GET /api/tags - Get all tags
+/**
+ * @swagger
+ * /api/tags:
+ *   get:
+ *     summary: Get all tags with optional popularity filter
+ *     tags: [Tags]
+ *     parameters:
+ *       - name: popular
+ *         in: query
+ *         description: Get popular tags only
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *       - name: limit
+ *         in: query
+ *         description: Limit number of popular tags (default 10)
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *     responses:
+ *       200:
+ *         description: List of tags
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Tag'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.get(
   "/",
   asyncHandler(async (req: Request, res: Response<ApiResponse>) => {

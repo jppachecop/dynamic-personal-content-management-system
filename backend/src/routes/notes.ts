@@ -14,7 +14,58 @@ const router = Router();
 const noteRepository = new NoteRepository();
 const userRepository = new UserRepository();
 
-// GET /api/notes - Get all notes with optional filters
+/**
+ * @swagger
+ * /api/notes:
+ *   get:
+ *     summary: Get all notes with optional filters
+ *     tags: [Notes]
+ *     parameters:
+ *       - name: userId
+ *         in: query
+ *         description: Filter notes by user ID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - name: category
+ *         in: query
+ *         description: Filter notes by category name
+ *         schema:
+ *           type: string
+ *       - name: tag
+ *         in: query
+ *         description: Filter notes by tag name
+ *         schema:
+ *           type: string
+ *       - name: favorites
+ *         in: query
+ *         description: Filter favorite notes (requires userId)
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *       - name: search
+ *         in: query
+ *         description: Search notes by title and content (requires userId)
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of notes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Note'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.get(
   "/",
   asyncHandler(async (req: Request, res: Response<ApiResponse>) => {
@@ -46,7 +97,34 @@ router.get(
   })
 );
 
-// GET /api/notes/:id - Get note by ID
+/**
+ * @swagger
+ * /api/notes/{id}:
+ *   get:
+ *     summary: Get note by ID
+ *     tags: [Notes]
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Note found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Note'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.get(
   "/:id",
   validateId,
@@ -111,7 +189,52 @@ router.get(
   })
 );
 
-// POST /api/notes - Create new note
+/**
+ * @swagger
+ * /api/notes:
+ *   post:
+ *     summary: Create a new note
+ *     tags: [Notes]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateNoteInput'
+ *     responses:
+ *       201:
+ *         description: Note created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Note'
+ *                 message:
+ *                   type: string
+ *                   example: "Note created successfully"
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.post(
   "/",
   validateCreateNote,
