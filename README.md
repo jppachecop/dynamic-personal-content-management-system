@@ -143,56 +143,96 @@ Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend
 
 ---
 
+## 🏗️ **Arquitetura do Projeto**
+
+Este projeto agora possui uma arquitetura **full-stack** com frontend e backend separados:
+
+```
+dynamic-personal-content-management-system/
+├── frontend/          # React + TypeScript + Vite
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── ...
+├── backend/           # Node.js + Express + PostgreSQL + Prisma
+│   ├── src/
+│   ├── prisma/
+│   ├── package.json
+│   └── ...
+└── README.md
+```
+
 ## ⚡ **Instalação Rápida**
 
-### **📋 Pré-requisitos**
+### **Pré-requisitos**
 
 Certifique-se de ter instalado:
 
 - **Node.js** 18+ ([Download](https://nodejs.org/))
 - **npm** ou **yarn** ou **pnpm**
 - **Git** ([Download](https://git-scm.com/))
+- **PostgreSQL** 13+ ([Download](https://www.postgresql.org/download/))
 
-### **🚀 Passos de Instalação**
+### **Frontend (React)**
 
-1. **Clone o repositório**
+1. **Navegue para o diretório frontend:**
+   ```bash
+   cd frontend
+   ```
 
-```bash
-git clone https://github.com/seu-usuario/dynamic-personal-content-management-system.git
-cd dynamic-personal-content-management-system
-```
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
 
-2. **Instale as dependências**
+3. **Execute o frontend:**
+   ```bash
+   npm run dev
+   ```
 
-```bash
-# Usando npm
-npm install
+4. **Acesse no navegador:**
+   ```
+   http://localhost:5173
+   ```
 
-# Usando yarn
-yarn install
+### **Backend (API)**
 
-# Usando pnpm
-pnpm install
-```
+1. **Navegue para o diretório backend:**
+   ```bash
+   cd backend
+   ```
 
-3. **Inicie o servidor de desenvolvimento**
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
 
-```bash
-# Usando npm
-npm run dev
+3. **Configure o banco de dados:**
+   ```bash
+   cp .env.example .env
+   # Edite o .env com suas configurações do PostgreSQL
+   ```
 
-# Usando yarn
-yarn dev
+4. **Execute as migrações:**
+   ```bash
+   npm run migrate
+   npm run db:seed
+   ```
 
-# Usando pnpm
-pnpm dev
-```
+5. **Execute o backend:**
+   ```bash
+   npm run dev
+   ```
 
-4. **Acesse o aplicativo**
+6. **Acesse a API:**
+   ```
+   http://localhost:3001
+   ```
 
-```
-http://localhost:5173
-```
+7. **Documentação da API:**
+   ```
+   http://localhost:3001/api-docs
+   ```
 
 ### **🔧 Scripts Disponíveis**
 
