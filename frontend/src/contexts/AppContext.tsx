@@ -18,6 +18,7 @@ import {
 import { useIndexedDB } from "@/hooks/useIndexedDB";
 import { toast } from "@/hooks/use-toast";
 import { useUserOperations } from "@/hooks/useUsersAPI";
+import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
 
 type AppAction =
   | { type: "SET_LOADING"; payload: boolean }
@@ -142,6 +143,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const db = useIndexedDB();
   const userOps = useUserOperations();
+  const categoryOps = useCategoryOperations();
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -150,8 +152,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
 
-        const categories = await db.getAllCategories();
-        if (categories.length === 0) {
+        // Initialize categories with defaults if needed - now using API
+        if (categoryOps.categories.length === 0 && !categoryOps.isLoading) {
           const defaultCategories = [
             { name: "Geral", color: "#3B82F6", icon: "📝" },
             { name: "Trabalho", color: "#8B5CF6", icon: "💼" },
@@ -161,16 +163,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           ];
 
           for (const categoryData of defaultCategories) {
-            await db.createCategory(categoryData);
+            try {
+              await categoryOps.createCategory(categoryData);
+              console.log("✅ Created default category via API:", categoryData.name);
+            } catch (error) {
+              console.error("❌ Failed to create default category:", error);
+            }
           }
         }
 
-        const [allCategories, allTags] = await Promise.all([
-          db.getAllCategories(),
-          db.getAllTags(),
-        ]);
+        // Load tags (still using IndexedDB for now)
+        const allTags = await db.getAllTags();
 
-        dispatch({ type: "SET_CATEGORIES", payload: allCategories });
+        // Update state with current data
+        dispatch({ type: "SET_CATEGORIES", payload: categoryOps.categories });
         dispatch({ type: "SET_TAGS", payload: allTags });
 
         // Handle saved user - now using API
@@ -201,7 +207,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
     initializeApp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db.isInitialized, userOps.isLoading, userOps.users.length]);
+  }, [
+    db.isInitialized, 
+    userOps.isLoading, 
+    categoryOps.isLoading,
+    userOps.users.length,
+    categoryOps.categories.length
+  ]);
 
   const createUser = async (
     userData: Omit<User, "id" | "createdAt" | "updatedAt">

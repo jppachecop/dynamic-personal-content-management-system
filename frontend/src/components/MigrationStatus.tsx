@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { CheckCircle, Clock, Database, Cloud } from "lucide-react";
 import { useUserOperations } from "@/hooks/useUsersAPI";
+import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
 
 /**
  * Component to show the migration status of each entity
@@ -16,6 +17,7 @@ import { useUserOperations } from "@/hooks/useUsersAPI";
  */
 export const MigrationStatus: React.FC = () => {
   const userOps = useUserOperations();
+  const categoryOps = useCategoryOperations();
 
   const getStatusIcon = (migrated: boolean) => {
     return migrated ? (
@@ -71,23 +73,29 @@ export const MigrationStatus: React.FC = () => {
           </div>
 
           {/* Categories Status */}
-          <div className="border rounded p-3">
+          <div className="border rounded p-3 bg-green-50">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                {getStatusIcon(false)}
+                {getStatusIcon(true)}
                 <span className="font-medium">Categories</span>
-                {getDataSourceIcon(false)}
+                {getDataSourceIcon(true)}
               </div>
               <Badge
                 variant="outline"
-                className="bg-gray-500 text-white text-xs"
+                className="bg-green-500 text-white text-xs"
               >
-                IndexedDB
+                API ✅
               </Badge>
             </div>
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Status:</span>
-              <span>Pending Migration</span>
+              <span>Loaded:</span>
+              <span>
+                {categoryOps.isLoading ? "Loading..." : categoryOps.categories.length}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Source:</span>
+              <span>Backend API</span>
             </div>
           </div>
 
@@ -136,9 +144,10 @@ export const MigrationStatus: React.FC = () => {
 
         {import.meta.env.DEV && (
           <div className="mt-4 p-2 bg-muted rounded text-xs">
-            <div className="font-medium mb-1">Phase 1: Users Migration</div>
+            <div className="font-medium mb-1">Phase 2: Categories Migration</div>
             <div>✅ Users now use Backend API</div>
-            <div>⏳ Categories, Tags, Notes still use IndexedDB</div>
+            <div>✅ Categories now use Backend API</div>
+            <div>⏳ Tags, Notes still use IndexedDB</div>
           </div>
         )}
       </CardContent>
