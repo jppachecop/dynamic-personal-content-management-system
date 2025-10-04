@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useReducer,
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from "react";
 import {
   AppState,
   User,
@@ -142,58 +136,49 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(
+    localStorage.getItem("currentUserId")
+  );
+  
   const userOps = useUserOperations();
   const categoryOps = useCategoryOperations();
   const tagOps = useTagOperations();
-  const noteOps = useNoteOperations();
+  // Only load notes if we have a current user
+  const noteOps = useNoteOperations(currentUserId || "");
 
   useEffect(() => {
     const initializeApp = async () => {
-      // Wait for API hooks to be ready
-      if (userOps.isLoading || categoryOps.isLoading || tagOps.isLoading || noteOps.isLoading) {
+      // Wait for API hooks to be ready (skip noteOps if no user)
+      if (
+        userOps.isLoading ||
+        categoryOps.isLoading ||
+        tagOps.isLoading ||
+        (currentUserId && noteOps.isLoading)
+      ) {
         return;
       }
 
       try {
         dispatch({ type: "SET_LOADING", payload: true });
 
-        // Initialize categories with defaults if needed - now using API
-        if (categoryOps.categories.length === 0 && !categoryOps.isLoading) {
-          const defaultCategories = [
-            { name: "Geral", color: "#3B82F6" },
-            { name: "Trabalho", color: "#8B5CF6" },
-            { name: "Pessoal", color: "#10B981" },
-            { name: "Ideias", color: "#F59E0B" },
-            { name: "Projetos", color: "#EF4444" },
-          ];
-
-          for (const categoryData of defaultCategories) {
-            try {
-              await categoryOps.createCategory(categoryData);
-              console.log("✅ Created default category via API:", categoryData.name);
-            } catch (error) {
-              console.error("❌ Failed to create default category:", error);
-            }
-          }
-        }
-
-        // Update state with current data - now using API for both categories and tags
+        // Update state with current data - categories and tags
         dispatch({ type: "SET_CATEGORIES", payload: categoryOps.categories });
         dispatch({ type: "SET_TAGS", payload: tagOps.tags });
 
-        // Handle saved user - now using API for both user and notes
-        const savedUserId = localStorage.getItem("currentUserId");
-        if (savedUserId && !userOps.isLoading) {
-          const user = userOps.getUserById(savedUserId);
+        // Handle current user session
+        if (currentUserId) {
+          const user = userOps.getUserById(currentUserId);
           if (user) {
             dispatch({ type: "SET_CURRENT_USER", payload: user });
-            // Load user notes from API - use the noteOps hook that's already available
+            // Load user-specific notes
             dispatch({ type: "SET_NOTES", payload: noteOps.notes });
             console.log("✅ Loaded user from API:", user.name);
             console.log("✅ Loaded user notes from API:", noteOps.notes.length);
           } else {
+            // User not found, clear session
             localStorage.removeItem("currentUserId");
-            console.log("❌ User not found in API, removed from localStorage");
+            setCurrentUserId(null);
+            console.log("❌ User not found in API, cleared session");
           }
         }
       } catch (error) {
@@ -211,14 +196,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     initializeApp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    userOps.isLoading, 
+    currentUserId,
+    userOps.isLoading,
     categoryOps.isLoading,
     tagOps.isLoading,
     noteOps.isLoading,
-    userOps.users.length,
     categoryOps.categories.length,
     tagOps.tags.length,
-    noteOps.notes.length
+    noteOps.notes.length,
   ]);
 
   const createUser = async (
@@ -229,6 +214,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       const user = await userOps.createUser(userData);
       dispatch({ type: "SET_CURRENT_USER", payload: user });
       localStorage.setItem("currentUserId", user.id);
+      setCurrentUserId(user.id);
       toast({
         title: "Usuário criado",
         description: `Bem-vindo, ${user.name}! (API)`,
@@ -251,8 +237,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       if (user) {
         dispatch({ type: "SET_CURRENT_USER", payload: user });
         localStorage.setItem("currentUserId", user.id);
-        // Load user notes from API
-        dispatch({ type: "SET_NOTES", payload: noteOps.notes });
+        setCurrentUserId(user.id);
+        // Notes will be loaded automatically via useEffect when currentUserId changes
         toast({
           title: "Login realizado",
           description: `Bem-vindo de volta, ${user.name}! (API)`,
@@ -279,6 +265,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: "SET_NOTES", payload: [] });
     dispatch({ type: "SET_SELECTED_NOTE", payload: null });
     localStorage.removeItem("currentUserId");
+    setCurrentUserId(null);
     toast({
       title: "Logout realizado",
       description: "Você foi desconectado com sucesso.",
@@ -286,7 +273,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   const createNote = async (title: string, content: string | null = null) => {
-    if (!state.currentUser) return;
+    if (!currentUserId) return;
 
     try {
       const noteData = {
@@ -294,7 +281,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         content,
         tags: [],
         category: state.categories[0]?.name || "Geral",
-        userId: state.currentUser.id,
+        userId: currentUserId,
         isFavorite: false,
       };
 
