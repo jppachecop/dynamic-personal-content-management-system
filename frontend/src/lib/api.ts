@@ -26,8 +26,8 @@ apiClient.interceptors.response.use(
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
-  error?: string;
   message?: string;
+  error?: string;
 }
 
 // Generic API functions
@@ -82,8 +82,13 @@ export const userApi = {
 
 // Category API functions
 export const categoryApi = {
-  getAll: (withUsage?: boolean) => 
-    api.get<Category[]>(`/categories${withUsage ? '?withUsage=true' : ''}`),
+  getAll: (userId?: string, withUsage?: boolean) => {
+    const params = new URLSearchParams();
+    if (userId) params.append('userId', userId);
+    if (withUsage) params.append('withUsage', 'true');
+    const queryString = params.toString();
+    return api.get<Category[]>(`/categories${queryString ? '?' + queryString : ''}`);
+  },
   getById: (id: string) => api.get<Category>(`/categories/${id}`),
   create: (category: Omit<Category, 'id'>) => 
     api.post<Category>('/categories', category),

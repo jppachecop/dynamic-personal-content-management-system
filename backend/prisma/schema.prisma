@@ -19,7 +19,8 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   // Relations
-  notes Note[]
+  notes      Note[]
+  categories Category[]
 
   @@index([email])
   @@map("users")
@@ -58,10 +59,16 @@ model Tag {
 }
 
 model Category {
-  id    String @id @default(uuid()) @db.Uuid
-  name  String @unique @db.VarChar(255)
-  color String @db.VarChar(7)
+  id     String @id @default(uuid()) @db.Uuid
+  name   String @db.VarChar(255)
+  color  String @db.VarChar(7)
+  userId String @map("user_id") @db.Uuid
 
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([name, userId])
+  @@index([userId])
   @@index([name])
   @@map("categories")
 }

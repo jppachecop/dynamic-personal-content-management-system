@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import {
   AppState,
   User,
@@ -139,9 +146,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(
     localStorage.getItem("currentUserId")
   );
-  
+
   const userOps = useUserOperations();
-  const categoryOps = useCategoryOperations();
+  const categoryOps = useCategoryOperations(currentUserId || "");
   const tagOps = useTagOperations();
   // Only load notes if we have a current user
   const noteOps = useNoteOperations(currentUserId || "");
@@ -170,6 +177,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           const user = userOps.getUserById(currentUserId);
           if (user) {
             dispatch({ type: "SET_CURRENT_USER", payload: user });
+
             // Load user-specific notes
             dispatch({ type: "SET_NOTES", payload: noteOps.notes });
             console.log("✅ Loaded user from API:", user.name);

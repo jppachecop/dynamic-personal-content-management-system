@@ -139,6 +139,9 @@ export const validateCreateCategory = [
   body("color")
     .matches(/^#[0-9A-Fa-f]{6}$/)
     .withMessage("Color must be a valid hex color"),
+  body("userId")
+    .isUUID()
+    .withMessage("Valid user ID is required"),
   handleValidationErrors,
 ];
 

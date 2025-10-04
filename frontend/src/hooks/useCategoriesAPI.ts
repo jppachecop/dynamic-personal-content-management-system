@@ -2,18 +2,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { categoryApi } from "../lib/api";
 import { queryKeys } from "../lib/queryClient";
 import { Category } from "../types";
-
 /**
  * API-based Categories Hook
  * Provides category management functionality via backend API
  */
 
-// Get all categories
-export const useCategories = (withUsage?: boolean) => {
+// Get all categories (optionally filtered by user)
+export const useCategories = (userId?: string, withUsage = false) => {
   return useQuery({
-    queryKey: withUsage ? queryKeys.categories.withUsage : queryKeys.categories.all,
-    queryFn: () => categoryApi.getAll(withUsage),
+    queryKey: queryKeys.categories.all(withUsage, userId),
+    queryFn: () => categoryApi.getAll(userId, withUsage),
     staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: !!userId, // Only run if userId is provided
   });
 };
 
@@ -44,8 +44,7 @@ export const useCreateCategory = () => {
       categoryApi.create(categoryData),
     onSuccess: (newCategory) => {
       // Invalidate and refetch categories lists
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.withUsage });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
       
       // Add the new category to the cache
       queryClient.setQueryData(queryKeys.categories.detail(newCategory.id), newCategory);
@@ -75,8 +74,7 @@ export const useUpdateCategory = () => {
       queryClient.setQueryData(queryKeys.categories.detail(id), updatedCategory);
       
       // Invalidate categories lists to ensure consistency
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.withUsage });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
       
       console.log("✅ Category updated via API:", updatedCategory.name);
     },
@@ -102,8 +100,7 @@ export const useDeleteCategory = () => {
       });
       
       // Invalidate categories lists
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.withUsage });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
       
       console.log("✅ Category deleted via API:", deletedId);
     },
@@ -114,8 +111,8 @@ export const useDeleteCategory = () => {
 };
 
 // Convenience hook for category operations
-export const useCategoryOperations = () => {
-  const categories = useCategories();
+export const useCategoryOperations = (userId: string) => {
+  const categories = useCategories(userId);
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();

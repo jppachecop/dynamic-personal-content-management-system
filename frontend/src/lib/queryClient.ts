@@ -28,8 +28,8 @@ export const queryKeys = {
   },
   // Categories
   categories: {
-    all: ["categories"] as const,
-    withUsage: ["categories", "withUsage"] as const,
+    all: (withUsage = false, userId?: string) => 
+      ["categories", { withUsage, userId }] as const,
     detail: (id: string) => ["categories", id] as const,
     usage: (id: string) => ["categories", id, "usage"] as const,
   },

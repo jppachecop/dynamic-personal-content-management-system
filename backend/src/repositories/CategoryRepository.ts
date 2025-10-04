@@ -7,6 +7,7 @@ export class CategoryRepository {
       data: {
         name: categoryData.name,
         color: categoryData.color,
+        userId: categoryData.userId,
       },
     });
     
@@ -21,9 +22,14 @@ export class CategoryRepository {
     return category;
   }
 
-  async findByName(name: string): Promise<Category | null> {
+  async findByName(name: string, userId: string): Promise<Category | null> {
     const category = await prisma.category.findUnique({
-      where: { name },
+      where: { 
+        name_userId: {
+          name,
+          userId
+        }
+      },
     });
     
     return category;
@@ -31,6 +37,15 @@ export class CategoryRepository {
 
   async findAll(): Promise<Category[]> {
     const categories = await prisma.category.findMany({
+      orderBy: { name: "asc" },
+    });
+    
+    return categories;
+  }
+
+  async findByUserId(userId: string): Promise<Category[]> {
+    const categories = await prisma.category.findMany({
+      where: { userId },
       orderBy: { name: "asc" },
     });
     

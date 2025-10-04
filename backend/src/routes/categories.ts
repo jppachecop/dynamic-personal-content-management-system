@@ -76,13 +76,27 @@ const categoryRepository = new CategoryRepository();
 router.get(
   "/",
   asyncHandler(async (req: Request, res: Response<ApiResponse>) => {
-    const { withUsage } = req.query;
+    const { userId, withUsage } = req.query;
 
     let categories;
-    if (withUsage === "true") {
-      categories = await categoryRepository.getCategoriesWithUsage();
+    if (userId && typeof userId === 'string') {
+      categories = await categoryRepository.findByUserId(userId);
     } else {
       categories = await categoryRepository.findAll();
+    }
+
+    if (withUsage === "true") {
+      categories = await Promise.all(
+        categories.map(async (category) => {
+          const usageCount = await categoryRepository.getCategoryUsageCount(
+            category.name
+          );
+          return {
+            ...category,
+            usageCount,
+          };
+        })
+      );
     }
 
     res.json({
@@ -170,9 +184,10 @@ router.post(
   asyncHandler(async (req: Request, res: Response<ApiResponse>) => {
     const categoryData: CreateCategoryInput = req.body;
 
-    // Check if category name already exists
+    // Check if category name already exists for this user
     const existingCategory = await categoryRepository.findByName(
-      categoryData.name
+      categoryData.name,
+      categoryData.userId
     );
     if (existingCategory) {
       res.status(409).json({
@@ -218,9 +233,9 @@ router.put(
       return;
     }
 
-    // Check if name is being updated and already exists
+    // Check if name is being updated and already exists for this user
     if (updateData.name && updateData.name !== existingCategory.name) {
-      const nameExists = await categoryRepository.findByName(updateData.name);
+      const nameExists = await categoryRepository.findByName(updateData.name, existingCategory.userId);
       if (nameExists) {
         res.status(409).json({
           success: false,

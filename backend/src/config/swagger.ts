@@ -150,7 +150,7 @@ const options: swaggerJsdoc.Options = {
         },
         Category: {
           type: "object",
-          required: ["id", "name", "color"],
+          required: ["id", "name", "color", "userId"],
           properties: {
             id: {
               type: "string",
@@ -167,6 +167,11 @@ const options: swaggerJsdoc.Options = {
               type: "string",
               pattern: "^#[0-9A-Fa-f]{6}$",
               description: "Hex color code for the category",
+            },
+            userId: {
+              type: "string",
+              format: "uuid",
+              description: "ID of the user who owns this category",
             },
           },
         },
@@ -249,7 +254,7 @@ const options: swaggerJsdoc.Options = {
         },
         CreateCategoryInput: {
           type: "object",
-          required: ["name", "color"],
+          required: ["name", "color", "userId"],
           properties: {
             name: {
               type: "string",
@@ -261,6 +266,11 @@ const options: swaggerJsdoc.Options = {
               type: "string",
               pattern: "^#[0-9A-Fa-f]{6}$",
               description: "Hex color code for the category",
+            },
+            userId: {
+              type: "string",
+              format: "uuid",
+              description: "ID of the user who owns this category",
             },
           },
         },
