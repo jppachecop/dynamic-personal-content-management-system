@@ -20,6 +20,7 @@ import { toast } from "@/hooks/use-toast";
 import { useUserOperations } from "@/hooks/useUsersAPI";
 import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
 import { useTagOperations } from "@/hooks/useTagsAPI";
+import { useNoteOperations } from "@/hooks/useNotesAPI";
 
 type AppAction =
   | { type: "SET_LOADING"; payload: boolean }
@@ -146,6 +147,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const userOps = useUserOperations();
   const categoryOps = useCategoryOperations();
   const tagOps = useTagOperations();
+  const noteOps = useNoteOperations();
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -178,15 +180,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         dispatch({ type: "SET_CATEGORIES", payload: categoryOps.categories });
         dispatch({ type: "SET_TAGS", payload: tagOps.tags });
 
-        // Handle saved user - now using API
+        // Handle saved user - now using API for both user and notes
         const savedUserId = localStorage.getItem("currentUserId");
         if (savedUserId && !userOps.isLoading) {
           const user = userOps.getUserById(savedUserId);
           if (user) {
             dispatch({ type: "SET_CURRENT_USER", payload: user });
-            const userNotes = await db.getNotesByUser(user.id);
-            dispatch({ type: "SET_NOTES", payload: userNotes });
+            // Load user notes from API - use the noteOps hook that's already available
+            dispatch({ type: "SET_NOTES", payload: noteOps.notes });
             console.log("✅ Loaded user from API:", user.name);
+            console.log("✅ Loaded user notes from API:", noteOps.notes.length);
           } else {
             localStorage.removeItem("currentUserId");
             console.log("❌ User not found in API, removed from localStorage");
@@ -211,9 +214,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     userOps.isLoading, 
     categoryOps.isLoading,
     tagOps.isLoading,
+    noteOps.isLoading,
     userOps.users.length,
     categoryOps.categories.length,
-    tagOps.tags.length
+    tagOps.tags.length,
+    noteOps.notes.length
   ]);
 
   const createUser = async (
@@ -293,13 +298,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         isFavorite: false,
       };
 
-      const note = await db.createNote(noteData);
+      // Use API instead of IndexedDB
+      const note = await noteOps.createNote(noteData);
       dispatch({ type: "ADD_NOTE", payload: note });
       dispatch({ type: "SET_SELECTED_NOTE", payload: note });
 
       toast({
         title: "Nota criada",
-        description: `"${title}" foi criada com sucesso.`,
+        description: `"${title}" foi criada com sucesso. (API)`,
       });
     } catch (error) {
       console.error("Failed to create note:", error);
@@ -313,7 +319,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const updateNote = async (note: Note) => {
     try {
-      const updatedNote = await db.updateNote(note);
+      // Use API instead of IndexedDB
+      const updatedNote = await noteOps.updateNote(note.id, {
+        title: note.title,
+        content: note.content,
+        tags: note.tags,
+        category: note.category,
+        isFavorite: note.isFavorite,
+      });
       dispatch({ type: "UPDATE_NOTE", payload: updatedNote });
     } catch (error) {
       console.error("Failed to update note:", error);
@@ -327,11 +340,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const deleteNote = async (id: string) => {
     try {
-      await db.deleteNote(id);
+      // Use API instead of IndexedDB
+      await noteOps.deleteNote(id);
       dispatch({ type: "DELETE_NOTE", payload: id });
       toast({
         title: "Nota excluída",
-        description: "A nota foi removida com sucesso.",
+        description: "A nota foi removida com sucesso. (API)",
       });
     } catch (error) {
       console.error("Failed to delete note:", error);
