@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { NoteRepository } from "../repositories/NoteRepository";
 import { UserRepository } from "../repositories/UserRepository";
+import { CategoryRepository } from "../repositories/CategoryRepository";
 import { ApiResponse, CreateNoteInput, UpdateNoteInput } from "../types";
 import {
   validateCreateNote,
@@ -13,6 +14,7 @@ import { asyncHandler } from "../middleware/errorHandler";
 const router = Router();
 const noteRepository = new NoteRepository();
 const userRepository = new UserRepository();
+const categoryRepository = new CategoryRepository();
 
 /**
  * @swagger
@@ -249,6 +251,12 @@ router.post(
         error: "User not found",
       });
       return;
+    }
+
+    // If categoryId is empty or null, find or create a default category
+    if (!noteData.categoryId || noteData.categoryId === "") {
+      const defaultCategory = await categoryRepository.findOrCreateDefaultCategory(noteData.userId);
+      noteData.categoryId = defaultCategory.id;
     }
 
     const note = await noteRepository.create(noteData);
