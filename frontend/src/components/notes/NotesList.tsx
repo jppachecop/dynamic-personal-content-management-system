@@ -11,12 +11,12 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 export const NotesList: React.FC = () => {
-  const { state, createNote, selectNote, setSearchQuery } = useApp();
+  const { state, notes, categories, createNote, selectNote, setSearchQuery } =
+    useApp();
 
   const { isMobile } = useScreenSize();
 
-  const { notes, selectedNote, searchQuery, selectedCategory, categories } =
-    state;
+  const { selectedNote, searchQuery, selectedCategory } = state;
 
   const filteredNotes = useMemo(() => {
     let filtered = [...notes];

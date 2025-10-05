@@ -61,7 +61,11 @@ export const useCreateNote = () => {
       noteApi.create(noteData),
     onSuccess: (newNote) => {
       // Invalidate and refetch notes lists
-      queryClient.invalidateQueries({ queryKey: queryKeys.notes.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notes.filtered({
+          userId: newNote.userId,
+        }),
+      });
       queryClient.invalidateQueries({
         queryKey: queryKeys.notes.byUser(newNote.userId),
       });
@@ -90,11 +94,15 @@ export const useUpdateNote = () => {
       data: Partial<Omit<Note, "id" | "createdAt" | "updatedAt">>;
     }) => noteApi.update(id, data),
     onSuccess: (updatedNote, { id }) => {
-      // Update the note in the cache
-      queryClient.setQueryData(queryKeys.notes.detail(id), updatedNote);
+      // // Update the note in the cache
+      // queryClient.setQueryData(queryKeys.notes.detail(id), updatedNote);
 
       // Invalidate notes lists to ensure consistency
-      queryClient.invalidateQueries({ queryKey: queryKeys.notes.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notes.filtered({
+          userId: updatedNote.userId,
+        }),
+      });
       queryClient.invalidateQueries({
         queryKey: queryKeys.notes.byUser(updatedNote.userId),
       });
@@ -132,7 +140,7 @@ export const useDeleteNote = () => {
 
 // Convenience hook for note operations
 export const useNoteOperations = (userId: string) => {
-  const notes = useNotes({ userId });
+  const notes = useNotesByUser(userId);
   const createNote = useCreateNote();
 
   return {

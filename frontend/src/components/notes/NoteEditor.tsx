@@ -30,14 +30,12 @@ import { useDeleteNote, useUpdateNote } from "@/hooks/useNotesAPI";
 import { toast } from "@/hooks/use-toast";
 
 export const NoteEditor: React.FC = () => {
-  const { state, dispatch, selectNote } = useApp();
-
+  const { state, categories, dispatch, selectNote } = useApp();
+  const { selectedNote } = state;
   const { isMobile } = useScreenSize();
-  const { selectedNote, categories } = state;
   const [editedNote, setEditedNote] = useState<Note | null>(null);
   const [newTag, setNewTag] = useState("");
   const [isAddingTag, setIsAddingTag] = useState(false);
-
   const deleteNote = useDeleteNote();
   const updateNote = useUpdateNote();
 
@@ -63,7 +61,6 @@ export const NoteEditor: React.FC = () => {
           isFavorite: editedNote.isFavorite,
         },
       });
-      dispatch({ type: "UPDATE_NOTE", payload: editedNote });
 
       toast({
         title: "Nota atualizada",
@@ -85,7 +82,7 @@ export const NoteEditor: React.FC = () => {
     if (window.confirm("Tem certeza que deseja excluir esta nota?")) {
       try {
         await deleteNote.mutateAsync(editedNote.id);
-        dispatch({ type: "DELETE_NOTE", payload: editedNote.id });
+        selectNote(null);
 
         toast({
           title: "Nota excluída",
@@ -178,12 +175,14 @@ export const NoteEditor: React.FC = () => {
               className="w-1 h-6 rounded-full flex-shrink-0"
               style={{
                 backgroundColor: getCategoryColor(
-                  editedNote.category?.name || ""
+                  categories.find((cat) => cat.id === editedNote.categoryId)
+                    ?.name || ""
                 ),
               }}
             />
             <div className="text-sm text-muted-foreground truncate">
-              {editedNote.category?.name || "Sem categoria"}
+              {categories.find((cat) => cat.id === editedNote.categoryId)
+                ?.name || "Sem categoria"}
             </div>
           </div>
 
@@ -250,6 +249,7 @@ export const NoteEditor: React.FC = () => {
           <div className={cn("flex items-center gap-2", isMobile && "w-full")}>
             <Folder className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Select
+              defaultValue={editedNote.category?.id}
               value={editedNote.categoryId}
               onValueChange={(value) => handleFieldChange("categoryId", value)}
             >

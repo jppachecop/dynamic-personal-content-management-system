@@ -14,15 +14,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CategoryDialog from "../CategoryDialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const AppSidebar: React.FC = () => {
-  const { state, toggleSidebar, createNote, logoutUser, setSelectedCategory } =
-    useApp();
-  const { sidebarOpen, currentUser, categories, notes, selectedCategory } =
-    state;
+  const { state, notes, categories, toggleSidebar, createNote, setSelectedCategory } = useApp();
+  const { sidebarOpen, selectedCategory } = state;
+  const { user, logout } = useAuth();
   const [categoryDialogOpen, setCategoryDialogOpen] = React.useState(false);
-
-  if (!currentUser) return null;
 
   const handleNewNote = () => {
     createNote("Nova Nota");
@@ -61,17 +59,17 @@ export const AppSidebar: React.FC = () => {
             {sidebarOpen && (
               <>
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={currentUser.avatar} />
+                  <AvatarImage src={user?.avatar} />
                   <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm">
-                    {currentUser.name.charAt(0).toUpperCase()}
+                    {user?.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-sidebar-foreground truncate">
-                    {currentUser.name}
+                    {user?.name}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {currentUser.email}
+                    {user?.email}
                   </p>
                 </div>
               </>
@@ -192,7 +190,7 @@ export const AppSidebar: React.FC = () => {
 
             <Button
               variant="ghost"
-              onClick={logoutUser}
+              onClick={logout}
               className={cn(
                 "justify-start text-muted-foreground hover:text-destructive transition-colors",
                 sidebarOpen ? "w-full" : "w-full p-2"

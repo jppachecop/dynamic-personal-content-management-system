@@ -26,14 +26,3 @@ export interface Category {
   color: string;
   userId: string;
 }
-
-export interface AppState {
-  currentUser: User | null;
-  selectedNote: Note | null;
-  notes: Note[];
-  categories: Category[];
-  searchQuery: string;
-  selectedCategory: string | null;
-  isLoading: boolean;
-  sidebarOpen: boolean;
-}

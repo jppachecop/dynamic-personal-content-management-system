@@ -1,34 +1,28 @@
-import React, {
-  createContext,
-  useContext,
-  useReducer,
-  useEffect,
-  ReactNode,
-} from "react";
-import { AppState, User, Note, Category } from "@/types";
-import { toast } from "@/hooks/use-toast";
-import { useUserOperations } from "@/hooks/useUsersAPI";
+import React, { createContext, useContext, useReducer, useEffect, ReactNode } from "react";
+import { Note, Category } from "@/types";
 import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
 import { useNoteOperations } from "@/hooks/useNotesAPI";
+import { useCreateNote } from "@/hooks/useNotesAPI";
+import { useAuth } from "./AuthContext";
+import { toast } from "@/hooks/use-toast";
+
+interface AppState {
+  selectedNote: Note | null;
+  searchQuery: string;
+  selectedCategory: string | null;
+  isLoading: boolean;
+  sidebarOpen: boolean;
+}
 
 type AppAction =
   | { type: "SET_LOADING"; payload: boolean }
-  | { type: "SET_CURRENT_USER"; payload: User | null }
   | { type: "SET_SELECTED_NOTE"; payload: Note | null }
-  | { type: "SET_NOTES"; payload: Note[] }
-  | { type: "ADD_NOTE"; payload: Note }
-  | { type: "UPDATE_NOTE"; payload: Note }
-  | { type: "DELETE_NOTE"; payload: string }
-  | { type: "SET_CATEGORIES"; payload: Category[] }
   | { type: "SET_SEARCH_QUERY"; payload: string }
   | { type: "SET_SELECTED_CATEGORY"; payload: string | null }
   | { type: "TOGGLE_SIDEBAR" };
 
 const initialState: AppState = {
-  currentUser: null,
   selectedNote: null,
-  notes: [],
-  categories: [],
   searchQuery: "",
   selectedCategory: null,
   isLoading: true,
@@ -39,34 +33,8 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
     case "SET_LOADING":
       return { ...state, isLoading: action.payload };
-    case "SET_CURRENT_USER":
-      return { ...state, currentUser: action.payload };
     case "SET_SELECTED_NOTE":
       return { ...state, selectedNote: action.payload };
-    case "SET_NOTES":
-      return { ...state, notes: action.payload };
-    case "ADD_NOTE":
-      return { ...state, notes: [action.payload, ...state.notes] };
-    case "UPDATE_NOTE":
-      return {
-        ...state,
-        notes: state.notes.map((note) =>
-          note.id === action.payload.id ? action.payload : note
-        ),
-        selectedNote:
-          state.selectedNote?.id === action.payload.id
-            ? action.payload
-            : state.selectedNote,
-      };
-    case "DELETE_NOTE":
-      return {
-        ...state,
-        notes: state.notes.filter((note) => note.id !== action.payload),
-        selectedNote:
-          state.selectedNote?.id === action.payload ? null : state.selectedNote,
-      };
-    case "SET_CATEGORIES":
-      return { ...state, categories: action.payload };
     case "SET_SEARCH_QUERY":
       return { ...state, searchQuery: action.payload };
     case "SET_SELECTED_CATEGORY":
@@ -80,8 +48,9 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 
 interface AppContextType {
   state: AppState;
+  notes: Note[];
+  categories: Category[];
   dispatch: React.Dispatch<AppAction>;
-  logoutUser: () => void;
   createNote: (title: string, content?: string | null) => Promise<void>;
   selectNote: (note: Note | null) => void;
   setSearchQuery: (query: string) => void;
@@ -105,45 +74,31 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const { user } = useAuth();
 
-  const userOps = useUserOperations();
-  const categoryOps = useCategoryOperations(state.currentUser?.id || "");
-  const noteOps = useNoteOperations(state.currentUser?.id || "");
+  const categoryOps = useCategoryOperations(user?.id || "");
+  const noteOps = useNoteOperations(user?.id || "");
+  const createNoteMutation = useCreateNote();
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
 
-        if (userOps.isLoading || categoryOps.isLoading || noteOps.isLoading) {
+        // Se não há usuário logado, apenas finaliza o loading
+        if (!user) {
+          dispatch({ type: "SET_LOADING", payload: false });
           return;
         }
 
-        // Update state with current data - categories
-        dispatch({ type: "SET_CATEGORIES", payload: categoryOps.categories });
-
-        // Handle current user session from localStorage
-        const storedUserId = localStorage.getItem("currentUserId");
-        if (storedUserId && !state.currentUser) {
-          const user = userOps.getUserById(storedUserId);
-          if (user) {
-            dispatch({ type: "SET_CURRENT_USER", payload: user });
-            console.log(
-              "✅ Restored user session from localStorage:",
-              user.name
-            );
-          } else {
-            // User not found, clear session
-            localStorage.removeItem("currentUserId");
-            console.log("❌ User not found in API, cleared session");
-          }
+        // Aguarda os hooks carregarem apenas se há usuário
+        if (categoryOps.isLoading || noteOps.isLoading) {
+          return;
         }
 
-        // Load notes for the current user
-        if (state.currentUser) {
-          dispatch({ type: "SET_NOTES", payload: noteOps.notes });
-          console.log("✅ Loaded user notes from API:", noteOps.notes.length);
-        }
+        console.log("✅ App initialized for user:", user.name);
+        console.log("✅ Loaded categories:", categoryOps.categories.length);
+        console.log("✅ Loaded notes:", noteOps.notes.length);
       } catch (error) {
         console.error("Failed to initialize app:", error);
         toast({
@@ -158,41 +113,30 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
     initializeApp();
   }, [
+    user?.id, // Só recarrega se o usuário mudar
     categoryOps.isLoading,
     noteOps.isLoading,
-    noteOps.notes,
-    state.currentUser,
-    userOps.isLoading,
-    userOps.users,
+    categoryOps.categories.length,
+    noteOps.notes.length,
   ]);
 
-  const logoutUser = () => {
-    dispatch({ type: "SET_CURRENT_USER", payload: null });
-    dispatch({ type: "SET_NOTES", payload: [] });
-    dispatch({ type: "SET_SELECTED_NOTE", payload: null });
-    localStorage.removeItem("currentUserId");
-    toast({
-      title: "Logout realizado",
-      description: "Você foi desconectado com sucesso.",
-    });
-  };
-
   const createNote = async (title: string, content: string | null = null) => {
-    if (!state.currentUser) return;
+    if (!user) return;
 
     try {
-      const noteData = {
+      // Pega a primeira categoria disponível ou usa um ID padrão
+      const defaultCategoryId = categoryOps.categories[0]?.id || "";
+      
+      const newNote = await createNoteMutation.mutateAsync({
         title,
         content,
         tags: [],
-        categoryId: state.categories[0]?.id || "",
-        userId: state.currentUser.id,
+        categoryId: defaultCategoryId,
+        userId: user.id,
         isFavorite: false,
-      };
+      });
 
-      const note = await noteOps.createNote(noteData);
-      dispatch({ type: "ADD_NOTE", payload: note });
-      dispatch({ type: "SET_SELECTED_NOTE", payload: note });
+      dispatch({ type: "SET_SELECTED_NOTE", payload: newNote });
 
       toast({
         title: "Nota criada",
@@ -224,10 +168,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: "TOGGLE_SIDEBAR" });
   };
 
-  const contextValue: AppContextType = {
+  const value: AppContextType = {
     state,
+    notes: noteOps.notes,
+    categories: categoryOps.categories,
     dispatch,
-    logoutUser,
     createNote,
     selectNote,
     setSearchQuery,
@@ -235,7 +180,5 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     toggleSidebar,
   };
 
-  return (
-    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

@@ -10,15 +10,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useApp } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { BookOpen, User, Mail, LogIn, UserPlus } from "lucide-react";
 import { useCreateUser, useLogin } from "@/hooks/useUsersAPI";
 import { toast } from "@/hooks/use-toast";
 
 export const WelcomeScreen: React.FC = () => {
-  const { dispatch } = useApp();
+  const { login: authLogin } = useAuth();
   const createUser = useCreateUser();
-  const login = useLogin();
+  const loginMutation = useLogin();
   const [isLoading, setIsLoading] = useState(false);
 
   const [loginForm, setLoginForm] = useState({
@@ -36,27 +36,13 @@ export const WelcomeScreen: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const user = await login.mutateAsync(loginForm.email.trim());
-
-      if (user) {
-        dispatch({ type: "SET_CURRENT_USER", payload: user });
-        localStorage.setItem("currentUserId", user.id);
-        toast({
-          title: "Login realizado",
-          description: `Bem-vindo de volta, ${user.name}!`,
-        });
-      } else {
-        toast({
-          title: "Usuário não encontrado",
-          description: "Email não cadastrado.",
-          variant: "destructive",
-        });
-      }
+      const user = await loginMutation.mutateAsync(loginForm.email.trim());
+      authLogin(user);
     } catch (error) {
       console.error("Failed to login user:", error);
       toast({
-        title: "Erro",
-        description: "Falha ao fazer login.",
+        title: "Usuário não encontrado",
+        description: "Email não cadastrado.",
         variant: "destructive",
       });
     } finally {
@@ -74,12 +60,7 @@ export const WelcomeScreen: React.FC = () => {
         name: registerForm.name.trim(),
         email: registerForm.email.trim(),
       });
-      dispatch({ type: "SET_CURRENT_USER", payload: user });
-      localStorage.setItem("currentUserId", user.id);
-      toast({
-        title: "Usuário criado",
-        description: `Bem-vindo, ${user.name}!`,
-      });
+      authLogin(user);
     } catch (error) {
       console.error("Failed to create user:", error);
       toast({

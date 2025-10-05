@@ -3,26 +3,34 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AppProvider } from "@/contexts/AppContext";
-import Index from "./pages/Index";
+import { AuthProvider } from "@/contexts/AuthContext";
 import NotFound from "./pages/NotFound";
-
+import { WelcomeScreen } from "./components/ui/WelcomeScreen";
+import { AuthenticatedLayout } from "./components/layout/AuthenticatedLayout";
+import { UnauthenticatedLayout } from "./components/layout/UnauthenticatedLayout";
+import { AppLayout } from "./components/layout/AppLayout";
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AppProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+    <TooltipProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route element={<UnauthenticatedLayout />}>
+              <Route path="/" element={<WelcomeScreen />} />
+            </Route>
+
+            <Route element={<AppLayout />}>
+              <Route path="/home" element={<AuthenticatedLayout />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AppProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

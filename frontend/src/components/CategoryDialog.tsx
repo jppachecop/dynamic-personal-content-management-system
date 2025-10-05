@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { useCreateCategory } from "@/hooks/useCategoriesAPI";
 import { toast } from "@/hooks/use-toast";
-import { useApp } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CategoryDialogProps {
   categoryDialogOpen: boolean;
@@ -16,7 +16,7 @@ const CategoryDialog: React.FC<CategoryDialogProps> = ({
   categoryDialogOpen,
   setCategoryDialogOpen,
 }) => {
-  const { state } = useApp();
+  const { user } = useAuth();
   const [name, setName] = useState("");
   const [color, setColor] = useState("#3B82F6");
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +62,7 @@ const CategoryDialog: React.FC<CategoryDialogProps> = ({
       await createCategory.mutateAsync({
         name: name.trim(),
         color,
-        userId: state.currentUser?.id,
+        userId: user?.id,
       });
 
       toast({
