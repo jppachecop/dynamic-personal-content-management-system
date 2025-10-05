@@ -38,7 +38,6 @@ export const AppSidebar: React.FC = () => {
   return (
     <>
       <CategoryDialog
-        userId={currentUser.id}
         categoryDialogOpen={categoryDialogOpen}
         setCategoryDialogOpen={setCategoryDialogOpen}
       />

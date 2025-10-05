@@ -3,45 +3,45 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
-import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
+import { useCreateCategory } from "@/hooks/useCategoriesAPI";
 import { toast } from "@/hooks/use-toast";
+import { useApp } from "@/contexts/AppContext";
 
 interface CategoryDialogProps {
-  userId: string;
   categoryDialogOpen: boolean;
   setCategoryDialogOpen: (open: boolean) => void;
 }
 
 const CategoryDialog: React.FC<CategoryDialogProps> = ({
-  userId,
   categoryDialogOpen,
   setCategoryDialogOpen,
 }) => {
+  const { state } = useApp();
   const [name, setName] = useState("");
   const [color, setColor] = useState("#3B82F6");
   const [isLoading, setIsLoading] = useState(false);
 
-  const categoryOps = useCategoryOperations(userId);
+  const createCategory = useCreateCategory();
 
   // Handle ESC key to close modal
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && categoryDialogOpen && !isLoading) {
+      if (event.key === "Escape" && categoryDialogOpen && !isLoading) {
         setCategoryDialogOpen(false);
       }
     };
 
     if (categoryDialogOpen) {
-      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener("keydown", handleKeyDown);
       // Focus the name input when modal opens
       setTimeout(() => {
-        const nameInput = document.getElementById('name');
+        const nameInput = document.getElementById("name");
         nameInput?.focus();
       }, 100);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [categoryDialogOpen, setCategoryDialogOpen, isLoading]);
 
@@ -59,10 +59,10 @@ const CategoryDialog: React.FC<CategoryDialogProps> = ({
 
     setIsLoading(true);
     try {
-      await categoryOps.createCategory({
+      await createCategory.mutateAsync({
         name: name.trim(),
         color,
-        userId,
+        userId: state.currentUser?.id,
       });
 
       toast({
@@ -101,12 +101,12 @@ const CategoryDialog: React.FC<CategoryDialogProps> = ({
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
         onClick={() => setCategoryDialogOpen(false)}
       >
         {/* Modal Content */}
-        <div 
+        <div
           className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-auto"
           onClick={(e) => e.stopPropagation()}
         >

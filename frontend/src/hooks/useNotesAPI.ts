@@ -134,7 +134,6 @@ export const useDeleteNote = () => {
 export const useNoteOperations = (userId: string) => {
   const notes = useNotes({ userId });
   const createNote = useCreateNote();
-  const updateNote = useUpdateNote();
   const deleteNote = useDeleteNote();
 
   return {
@@ -145,19 +144,6 @@ export const useNoteOperations = (userId: string) => {
 
     // Operations
     createNote: createNote.mutateAsync,
-    updateNote: (
-      id: string,
-      data: Partial<Omit<Note, "id" | "createdAt" | "updatedAt">>
-    ) => updateNote.mutateAsync({ id, data }),
     deleteNote: deleteNote.mutateAsync,
-
-    // States
-    isCreating: createNote.isPending,
-    isUpdating: updateNote.isPending,
-    isDeleting: deleteNote.isPending,
-
-    // Utilities
-    getNoteById: (id: string) => notes.data?.find((n) => n.id === id),
-    getFavoriteNotes: () => notes.data?.filter((n) => n.isFavorite) || [],
   };
 };

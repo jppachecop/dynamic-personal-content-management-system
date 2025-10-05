@@ -83,7 +83,6 @@ interface AppContextType {
   dispatch: React.Dispatch<AppAction>;
   logoutUser: () => void;
   createNote: (title: string, content?: string | null) => Promise<void>;
-  updateNote: (note: Note) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
   selectNote: (note: Note | null) => void;
   setSearchQuery: (query: string) => void;
@@ -210,31 +209,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
-  const updateNote = async (note: Note) => {
-    try {
-      const updatedNote = await noteOps.updateNote(note.id, {
-        title: note.title,
-        content: note.content,
-        tags: note.tags,
-        categoryId: note.categoryId,
-        isFavorite: note.isFavorite,
-      });
-      dispatch({ type: "UPDATE_NOTE", payload: updatedNote });
-
-      toast({
-        title: "Nota atualizada",
-        description: "Nota salva com sucesso.",
-      });
-    } catch (error) {
-      console.error("Failed to update note:", error);
-      toast({
-        title: "Erro",
-        description: "Falha ao atualizar nota.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const deleteNote = async (id: string) => {
     try {
       await noteOps.deleteNote(id);
@@ -275,7 +249,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch,
     logoutUser,
     createNote,
-    updateNote,
     deleteNote,
     selectNote,
     setSearchQuery,

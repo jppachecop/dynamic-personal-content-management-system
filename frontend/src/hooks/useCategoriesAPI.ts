@@ -38,17 +38,20 @@ export const useCategoryUsage = (id: string) => {
 // Create category mutation
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (categoryData: Omit<Category, "id">) =>
       categoryApi.create(categoryData),
     onSuccess: (newCategory) => {
       // Invalidate and refetch categories lists
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      
+
       // Add the new category to the cache
-      queryClient.setQueryData(queryKeys.categories.detail(newCategory.id), newCategory);
-      
+      queryClient.setQueryData(
+        queryKeys.categories.detail(newCategory.id),
+        newCategory
+      );
+
       console.log("✅ Category created via API:", newCategory.name);
     },
     onError: (error) => {
@@ -60,22 +63,25 @@ export const useCreateCategory = () => {
 // Update category mutation
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ 
-      id, 
-      data 
-    }: { 
-      id: string; 
-      data: Partial<Omit<Category, "id">> 
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<Omit<Category, "id">>;
     }) => categoryApi.update(id, data),
     onSuccess: (updatedCategory, { id }) => {
       // Update the category in the cache
-      queryClient.setQueryData(queryKeys.categories.detail(id), updatedCategory);
-      
+      queryClient.setQueryData(
+        queryKeys.categories.detail(id),
+        updatedCategory
+      );
+
       // Invalidate categories lists to ensure consistency
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      
+
       console.log("✅ Category updated via API:", updatedCategory.name);
     },
     onError: (error) => {
@@ -87,21 +93,21 @@ export const useUpdateCategory = () => {
 // Delete category mutation
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: categoryApi.delete,
     onSuccess: (_, deletedId) => {
       // Remove category from cache
-      queryClient.removeQueries({ 
-        queryKey: queryKeys.categories.detail(deletedId) 
+      queryClient.removeQueries({
+        queryKey: queryKeys.categories.detail(deletedId),
       });
-      queryClient.removeQueries({ 
-        queryKey: queryKeys.categories.usage(deletedId) 
+      queryClient.removeQueries({
+        queryKey: queryKeys.categories.usage(deletedId),
       });
-      
+
       // Invalidate categories lists
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      
+
       console.log("✅ Category deleted via API:", deletedId);
     },
     onError: (error) => {
@@ -113,7 +119,6 @@ export const useDeleteCategory = () => {
 // Convenience hook for category operations
 export const useCategoryOperations = (userId: string) => {
   const categories = useCategories(userId);
-  const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
 
@@ -122,22 +127,10 @@ export const useCategoryOperations = (userId: string) => {
     categories: categories.data || [],
     isLoading: categories.isLoading,
     error: categories.error,
-    
+
     // Operations
-    createCategory: createCategory.mutateAsync,
-    updateCategory: (
-      id: string, 
-      data: Partial<Omit<Category, "id">>
-    ) => updateCategory.mutateAsync({ id, data }),
+    updateCategory: (id: string, data: Partial<Omit<Category, "id">>) =>
+      updateCategory.mutateAsync({ id, data }),
     deleteCategory: deleteCategory.mutateAsync,
-    
-    // States
-    isCreating: createCategory.isPending,
-    isUpdating: updateCategory.isPending,
-    isDeleting: deleteCategory.isPending,
-    
-    // Utilities
-    getCategoryById: (id: string) => categories.data?.find((c) => c.id === id),
-    getCategoryByName: (name: string) => categories.data?.find((c) => c.name === name),
   };
 };

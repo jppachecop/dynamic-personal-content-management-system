@@ -5,15 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useApp } from "@/contexts/AppContext";
 import { useScreenSize } from "@/hooks/use-mobile";
-import {
-  Search,
-  Plus,
-  Star,
-  MoreVertical,
-  Calendar,
-  Tag,
-  FileText,
-} from "lucide-react";
+import { Search, Plus, Star, Calendar, Tag, FileText } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -184,18 +176,6 @@ export const NotesList: React.FC = () => {
                       {note.isFavorite && (
                         <Star className="h-4 w-4 text-warning fill-current" />
                       )}
-                      {!isMobile && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <MoreVertical className="h-3 w-3" />
-                        </Button>
-                      )}
                     </div>
                   </div>
 
@@ -221,11 +201,11 @@ export const NotesList: React.FC = () => {
                           })}
                         </span>
                       </div>
-                      
+
                       {note.category && (
                         <div className="flex items-center gap-1">
-                          <div 
-                            className="w-2 h-2 rounded-full" 
+                          <div
+                            className="w-2 h-2 rounded-full"
                             style={{ backgroundColor: note.category.color }}
                           />
                           <span className="text-xs">{note.category.name}</span>
