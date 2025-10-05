@@ -26,11 +26,11 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useUpdateNote } from "@/hooks/useNotesAPI";
+import { useDeleteNote, useUpdateNote } from "@/hooks/useNotesAPI";
 import { toast } from "@/hooks/use-toast";
 
 export const NoteEditor: React.FC = () => {
-  const { state, dispatch, deleteNote, selectNote } = useApp();
+  const { state, dispatch, selectNote } = useApp();
 
   const { isMobile } = useScreenSize();
   const { selectedNote, categories } = state;
@@ -38,6 +38,7 @@ export const NoteEditor: React.FC = () => {
   const [newTag, setNewTag] = useState("");
   const [isAddingTag, setIsAddingTag] = useState(false);
 
+  const deleteNote = useDeleteNote();
   const updateNote = useUpdateNote();
 
   useEffect(() => {
@@ -82,7 +83,23 @@ export const NoteEditor: React.FC = () => {
     if (!editedNote) return;
 
     if (window.confirm("Tem certeza que deseja excluir esta nota?")) {
-      await deleteNote(editedNote.id);
+      try {
+        await deleteNote.mutateAsync(editedNote.id);
+        dispatch({ type: "DELETE_NOTE", payload: editedNote.id });
+
+        toast({
+          title: "Nota excluída",
+          description: "Nota removida com sucesso.",
+        });
+      } catch (error) {
+        console.error("Failed to delete note:", error);
+        toast({
+          title: "Erro",
+          description: "Falha ao excluir nota.",
+          variant: "destructive",
+        });
+      }
+
       selectNote(null);
     }
   };

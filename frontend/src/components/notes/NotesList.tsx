@@ -11,8 +11,7 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 export const NotesList: React.FC = () => {
-  const { state, createNote, selectNote, setSearchQuery, deleteNote } =
-    useApp();
+  const { state, createNote, selectNote, setSearchQuery } = useApp();
 
   const { isMobile } = useScreenSize();
 

@@ -134,7 +134,6 @@ export const useDeleteNote = () => {
 export const useNoteOperations = (userId: string) => {
   const notes = useNotes({ userId });
   const createNote = useCreateNote();
-  const deleteNote = useDeleteNote();
 
   return {
     // Data
@@ -144,6 +143,5 @@ export const useNoteOperations = (userId: string) => {
 
     // Operations
     createNote: createNote.mutateAsync,
-    deleteNote: deleteNote.mutateAsync,
   };
 };

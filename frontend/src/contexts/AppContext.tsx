@@ -83,7 +83,6 @@ interface AppContextType {
   dispatch: React.Dispatch<AppAction>;
   logoutUser: () => void;
   createNote: (title: string, content?: string | null) => Promise<void>;
-  deleteNote: (id: string) => Promise<void>;
   selectNote: (note: Note | null) => void;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string | null) => void;
@@ -209,25 +208,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
-  const deleteNote = async (id: string) => {
-    try {
-      await noteOps.deleteNote(id);
-      dispatch({ type: "DELETE_NOTE", payload: id });
-
-      toast({
-        title: "Nota excluída",
-        description: "Nota removida com sucesso.",
-      });
-    } catch (error) {
-      console.error("Failed to delete note:", error);
-      toast({
-        title: "Erro",
-        description: "Falha ao excluir nota.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const selectNote = (note: Note | null) => {
     dispatch({ type: "SET_SELECTED_NOTE", payload: note });
   };
@@ -249,7 +229,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch,
     logoutUser,
     createNote,
-    deleteNote,
     selectNote,
     setSearchQuery,
     setSelectedCategory,
