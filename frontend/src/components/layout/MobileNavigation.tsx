@@ -23,6 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCreateNote } from "@/hooks/useNotesAPI";
+import UserSettingsDialog from "../users/UserSettingsDialog";
 
 interface MobileNavigationProps {
   className?: string;
@@ -189,14 +190,17 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
               </div>
 
               <div className="p-4 border-t space-y-2">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Configurações
-                </Button>
+                <UserSettingsDialog
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Configurações
+                    </Button>
+                  }
+                />
                 <Button
                   variant="ghost"
                   className="w-full justify-start text-destructive hover:text-destructive"
