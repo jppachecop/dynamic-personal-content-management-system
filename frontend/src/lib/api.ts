@@ -73,6 +73,7 @@ export const api = {
 export const userApi = {
   getAll: () => api.get<User[]>("/users"),
   getById: (id: string) => api.get<User>(`/users/${id}`),
+  login: (email: string) => api.post<User>(`/users/login`, { email }),
   create: (user: Omit<User, "id" | "createdAt" | "updatedAt">) =>
     api.post<User>("/users", user),
   update: (

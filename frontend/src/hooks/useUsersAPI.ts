@@ -26,6 +26,19 @@ export const useUser = (id: string) => {
   });
 };
 
+// Login
+export const useLogin = () => {
+  return useMutation({
+    mutationFn: (email: string) => userApi.login(email),
+    onSuccess: (user) => {
+      console.log("✅ User found via API:", user.name);
+    },
+    onError: (error) => {
+      console.error("❌ Failed to find user via API:", error);
+    },
+  });
+};
+
 // Create user mutation
 export const useCreateUser = () => {
   const queryClient = useQueryClient();
@@ -101,7 +114,6 @@ export const useDeleteUser = () => {
 // Convenience hook for user operations
 export const useUserOperations = () => {
   const users = useUsers();
-  const createUser = useCreateUser();
   const updateUser = useUpdateUser();
   const deleteUser = useDeleteUser();
 
@@ -112,7 +124,6 @@ export const useUserOperations = () => {
     error: users.error,
 
     // Operations
-    createUser: createUser.mutateAsync,
     updateUser: (
       id: string,
       data: Partial<Omit<User, "id" | "createdAt" | "updatedAt">>
@@ -120,7 +131,6 @@ export const useUserOperations = () => {
     deleteUser: deleteUser.mutateAsync,
 
     // States
-    isCreating: createUser.isPending,
     isUpdating: updateUser.isPending,
     isDeleting: deleteUser.isPending,
 

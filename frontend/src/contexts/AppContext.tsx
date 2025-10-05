@@ -3,7 +3,6 @@ import React, {
   useContext,
   useReducer,
   useEffect,
-  useState,
   ReactNode,
 } from "react";
 import { AppState, User, Note, Category } from "@/types";
@@ -82,12 +81,8 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 interface AppContextType {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
-  createUser: (
-    userData: Omit<User, "id" | "createdAt" | "updatedAt">
-  ) => Promise<void>;
-  loginUser: (email: string) => Promise<void>;
   logoutUser: () => void;
-  createNote: (title: string, content?: string) => Promise<void>;
+  createNote: (title: string, content?: string | null) => Promise<void>;
   updateNote: (note: Note) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
   selectNote: (note: Note | null) => void;
@@ -98,7 +93,7 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const useApp = () => {
+export const useApp = (): AppContextType => {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error("useApp must be used within an AppProvider");
@@ -112,48 +107,40 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(
-    localStorage.getItem("currentUserId")
-  );
 
   const userOps = useUserOperations();
-  const categoryOps = useCategoryOperations(currentUserId || "");
-  // Only load notes if we have a current user
-  const noteOps = useNoteOperations(currentUserId || "");
+  const categoryOps = useCategoryOperations(state.currentUser?.id || "");
+  const noteOps = useNoteOperations(state.currentUser?.id || "");
 
   useEffect(() => {
     const initializeApp = async () => {
-      // Wait for API hooks to be ready (skip noteOps if no user)
-      if (
-        userOps.isLoading ||
-        categoryOps.isLoading ||
-        (currentUserId && noteOps.isLoading)
-      ) {
-        return;
-      }
-
       try {
         dispatch({ type: "SET_LOADING", payload: true });
 
         // Update state with current data - categories
         dispatch({ type: "SET_CATEGORIES", payload: categoryOps.categories });
 
-        // Handle current user session
-        if (currentUserId) {
-          const user = userOps.getUserById(currentUserId);
+        // Handle current user session from localStorage
+        const storedUserId = localStorage.getItem("currentUserId");
+        if (storedUserId && !state.currentUser) {
+          const user = userOps.getUserById(storedUserId);
           if (user) {
             dispatch({ type: "SET_CURRENT_USER", payload: user });
-
-            // Load user-specific notes
-            dispatch({ type: "SET_NOTES", payload: noteOps.notes });
-            console.log("✅ Loaded user from API:", user.name);
-            console.log("✅ Loaded user notes from API:", noteOps.notes.length);
+            console.log(
+              "✅ Restored user session from localStorage:",
+              user.name
+            );
           } else {
             // User not found, clear session
             localStorage.removeItem("currentUserId");
-            setCurrentUserId(null);
             console.log("❌ User not found in API, cleared session");
           }
+        }
+
+        // Load notes for the current user
+        if (state.currentUser) {
+          dispatch({ type: "SET_NOTES", payload: noteOps.notes });
+          console.log("✅ Loaded user notes from API:", noteOps.notes.length);
         }
       } catch (error) {
         console.error("Failed to initialize app:", error);
@@ -168,76 +155,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     };
 
     initializeApp();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentUserId,
-    userOps.isLoading,
-    categoryOps.isLoading,
-    noteOps.isLoading,
-    categoryOps.categories.length,
-    noteOps.notes.length,
-  ]);
-
-  const createUser = async (
-    userData: Omit<User, "id" | "createdAt" | "updatedAt">
-  ) => {
-    try {
-      // Use API
-      const user = await userOps.createUser(userData);
-      dispatch({ type: "SET_CURRENT_USER", payload: user });
-      localStorage.setItem("currentUserId", user.id);
-      setCurrentUserId(user.id);
-      toast({
-        title: "Usuário criado",
-        description: `Bem-vindo, ${user.name}! (API)`,
-      });
-    } catch (error) {
-      console.error("Failed to create user:", error);
-      toast({
-        title: "Erro",
-        description: "Falha ao criar usuário.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const loginUser = async (email: string) => {
-    try {
-      // Use API
-      const user = userOps.getUserByEmail(email);
-
-      if (user) {
-        dispatch({ type: "SET_CURRENT_USER", payload: user });
-        localStorage.setItem("currentUserId", user.id);
-        setCurrentUserId(user.id);
-        // Notes will be loaded automatically via useEffect when currentUserId changes
-        toast({
-          title: "Login realizado",
-          description: `Bem-vindo de volta, ${user.name}! (API)`,
-        });
-      } else {
-        toast({
-          title: "Usuário não encontrado",
-          description: "Email não cadastrado.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to login:", error);
-      toast({
-        title: "Erro",
-        description: "Falha ao fazer login.",
-        variant: "destructive",
-      });
-    }
-  };
+  }, [noteOps.notes, state.currentUser]);
 
   const logoutUser = () => {
     dispatch({ type: "SET_CURRENT_USER", payload: null });
     dispatch({ type: "SET_NOTES", payload: [] });
     dispatch({ type: "SET_SELECTED_NOTE", payload: null });
     localStorage.removeItem("currentUserId");
-    setCurrentUserId(null);
     toast({
       title: "Logout realizado",
       description: "Você foi desconectado com sucesso.",
@@ -245,7 +169,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   const createNote = async (title: string, content: string | null = null) => {
-    if (!currentUserId) return;
+    if (!state.currentUser) return;
 
     try {
       const noteData = {
@@ -253,18 +177,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         content,
         tags: [],
         categoryId: state.categories[0]?.id || "",
-        userId: currentUserId,
+        userId: state.currentUser.id,
         isFavorite: false,
       };
 
-      // Use API
       const note = await noteOps.createNote(noteData);
       dispatch({ type: "ADD_NOTE", payload: note });
       dispatch({ type: "SET_SELECTED_NOTE", payload: note });
 
       toast({
         title: "Nota criada",
-        description: `"${title}" foi criada com sucesso. (API)`,
+        description: "Nova nota criada com sucesso.",
       });
     } catch (error) {
       console.error("Failed to create note:", error);
@@ -278,7 +201,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const updateNote = async (note: Note) => {
     try {
-      // Use API
       const updatedNote = await noteOps.updateNote(note.id, {
         title: note.title,
         content: note.content,
@@ -287,6 +209,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         isFavorite: note.isFavorite,
       });
       dispatch({ type: "UPDATE_NOTE", payload: updatedNote });
+
+      toast({
+        title: "Nota atualizada",
+        description: "Nota salva com sucesso.",
+      });
     } catch (error) {
       console.error("Failed to update note:", error);
       toast({
@@ -299,12 +226,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const deleteNote = async (id: string) => {
     try {
-      // Use API
       await noteOps.deleteNote(id);
       dispatch({ type: "DELETE_NOTE", payload: id });
+
       toast({
         title: "Nota excluída",
-        description: "A nota foi removida com sucesso. (API)",
+        description: "Nota removida com sucesso.",
       });
     } catch (error) {
       console.error("Failed to delete note:", error);
@@ -335,8 +262,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const contextValue: AppContextType = {
     state,
     dispatch,
-    createUser,
-    loginUser,
     logoutUser,
     createNote,
     updateNote,

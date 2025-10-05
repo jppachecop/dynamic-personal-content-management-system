@@ -107,6 +107,89 @@ router.get(
 
 /**
  * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: Login user by email
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User email address
+ *             required:
+ *               - email
+ *     responses:
+ *       200:
+ *         description: User found and logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *                 message:
+ *                   type: string
+ *                   example: "Login successful"
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+router.post(
+  "/login",
+  asyncHandler(async (req: Request, res: Response<ApiResponse>) => {
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400).json({
+        success: false,
+        error: "Email is required",
+      });
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({
+        success: false,
+        error: "Invalid email format",
+      });
+      return;
+    }
+
+    const user = await userRepository.findByEmail(email);
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      data: user,
+      message: "Login successful",
+    });
+  })
+);
+
+/**
+ * @swagger
  * /api/users:
  *   post:
  *     summary: Create a new user
