@@ -18,10 +18,11 @@ import {
   Folder,
   Settings,
   LogOut,
-  X,
   ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCreateNote } from "@/hooks/useNotesAPI";
 
 interface MobileNavigationProps {
   className?: string;
@@ -30,16 +31,22 @@ interface MobileNavigationProps {
 export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   className,
 }) => {
-  const { state, createNote, logoutUser, setSelectedCategory, selectNote } =
-    useApp();
-  const { currentUser, categories, notes, selectedCategory, selectedNote } =
-    state;
+  const {
+    selectedCategory,
+    selectedNote,
+    setSelectedCategory,
+    selectNote,
+    categories,
+    notes,
+  } = useApp();
+  const { mutateAsync: createNote } = useCreateNote();
+  const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  if (!currentUser) return null;
+  if (!user) return null;
 
   const handleNewNote = () => {
-    createNote("Nova Nota");
+    createNote({ title: "Nova Nota" });
     setIsOpen(false);
   };
 
@@ -93,20 +100,17 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
               <SheetHeader className="p-4 border-b">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={currentUser.avatar}
-                      alt={currentUser.name}
-                    />
+                    <AvatarImage src={user.avatar} alt={user.name} />
                     <AvatarFallback className="text-xs bg-gradient-primary text-primary-foreground">
-                      {currentUser.name.charAt(0).toUpperCase()}
+                      {user.name.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <SheetTitle className="text-sm font-medium truncate">
-                      {currentUser.name}
+                      {user.name}
                     </SheetTitle>
                     <p className="text-xs text-muted-foreground truncate">
-                      {currentUser.email}
+                      {user.email}
                     </p>
                   </div>
                 </div>
@@ -197,7 +201,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
                   variant="ghost"
                   className="w-full justify-start text-destructive hover:text-destructive"
                   onClick={() => {
-                    logoutUser();
+                    logout();
                     setIsOpen(false);
                   }}
                 >
