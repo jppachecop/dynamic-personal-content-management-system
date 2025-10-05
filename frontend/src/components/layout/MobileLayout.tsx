@@ -5,8 +5,7 @@ import { NoteEditor } from '../notes/NoteEditor';
 import { useApp } from '@/contexts/AppContext';
 
 export const MobileLayout: React.FC = () => {
-    const { state } = useApp();
-    const { selectedNote } = state;
+    const { selectedNote } = useApp();
 
     return (
         <div className="h-screen flex flex-col bg-background">
