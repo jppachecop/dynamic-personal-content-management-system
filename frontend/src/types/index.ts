@@ -27,10 +27,6 @@ export interface Category {
   userId: string;
 }
 
-export type ViewMode = "grid" | "list";
-export type SortBy = "created" | "updated" | "title" | "category";
-export type SortOrder = "asc" | "desc";
-
 export interface AppState {
   currentUser: User | null;
   selectedNote: Note | null;
@@ -38,9 +34,6 @@ export interface AppState {
   categories: Category[];
   searchQuery: string;
   selectedCategory: string | null;
-  viewMode: ViewMode;
-  sortBy: SortBy;
-  sortOrder: SortOrder;
   isLoading: boolean;
   sidebarOpen: boolean;
 }

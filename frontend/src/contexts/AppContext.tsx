@@ -6,15 +6,7 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import {
-  AppState,
-  User,
-  Note,
-  Category,
-  ViewMode,
-  SortBy,
-  SortOrder,
-} from "@/types";
+import { AppState, User, Note, Category } from "@/types";
 import { toast } from "@/hooks/use-toast";
 import { useUserOperations } from "@/hooks/useUsersAPI";
 import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
@@ -31,9 +23,6 @@ type AppAction =
   | { type: "SET_CATEGORIES"; payload: Category[] }
   | { type: "SET_SEARCH_QUERY"; payload: string }
   | { type: "SET_SELECTED_CATEGORY"; payload: string | null }
-  | { type: "SET_VIEW_MODE"; payload: ViewMode }
-  | { type: "SET_SORT_BY"; payload: SortBy }
-  | { type: "SET_SORT_ORDER"; payload: SortOrder }
   | { type: "TOGGLE_SIDEBAR" };
 
 const initialState: AppState = {
@@ -43,9 +32,6 @@ const initialState: AppState = {
   categories: [],
   searchQuery: "",
   selectedCategory: null,
-  viewMode: "list",
-  sortBy: "updated",
-  sortOrder: "desc",
   isLoading: true,
   sidebarOpen: false,
 };
@@ -86,12 +72,6 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, searchQuery: action.payload };
     case "SET_SELECTED_CATEGORY":
       return { ...state, selectedCategory: action.payload };
-    case "SET_VIEW_MODE":
-      return { ...state, viewMode: action.payload };
-    case "SET_SORT_BY":
-      return { ...state, sortBy: action.payload };
-    case "SET_SORT_ORDER":
-      return { ...state, sortOrder: action.payload };
     case "TOGGLE_SIDEBAR":
       return { ...state, sidebarOpen: !state.sidebarOpen };
     default:
