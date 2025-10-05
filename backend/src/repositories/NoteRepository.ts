@@ -8,9 +8,12 @@ export class NoteRepository {
         title: noteData.title,
         content: noteData.content,
         tags: noteData.tags,
-        category: noteData.category,
+        categoryId: noteData.categoryId,
         userId: noteData.userId,
         isFavorite: noteData.isFavorite || false,
+      },
+      include: {
+        category: true,
       },
     });
     
@@ -20,6 +23,9 @@ export class NoteRepository {
   async findById(id: string): Promise<Note | null> {
     const note = await prisma.note.findUnique({
       where: { id },
+      include: {
+        category: true,
+      },
     });
     
     return note;
@@ -28,6 +34,9 @@ export class NoteRepository {
   async findAll(): Promise<Note[]> {
     const notes = await prisma.note.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        category: true,
+      },
     });
     
     return notes;
@@ -37,15 +46,38 @@ export class NoteRepository {
     const notes = await prisma.note.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
+      include: {
+        category: true,
+      },
     });
     
     return notes;
   }
 
-  async findByCategory(category: string): Promise<Note[]> {
+  async findByCategoryId(categoryId: string): Promise<Note[]> {
     const notes = await prisma.note.findMany({
-      where: { category },
+      where: { categoryId },
       orderBy: { createdAt: "desc" },
+      include: {
+        category: true,
+      },
+    });
+    
+    return notes;
+  }
+
+  async findByCategoryName(categoryName: string, userId: string): Promise<Note[]> {
+    const notes = await prisma.note.findMany({
+      where: {
+        category: {
+          name: categoryName,
+          userId: userId,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      include: {
+        category: true,
+      },
     });
     
     return notes;
@@ -59,6 +91,9 @@ export class NoteRepository {
         },
       },
       orderBy: { createdAt: "desc" },
+      include: {
+        category: true,
+      },
     });
     
     return notes;
@@ -74,6 +109,9 @@ export class NoteRepository {
     const notes = await prisma.note.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      include: {
+        category: true,
+      },
     });
     
     return notes;
@@ -97,6 +135,9 @@ export class NoteRepository {
     const notes = await prisma.note.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      include: {
+        category: true,
+      },
     });
     
     return notes;
@@ -107,7 +148,7 @@ export class NoteRepository {
       throw new Error("Note ID is required for update");
     }
 
-    const { id, ...updateData } = noteData;
+    const { id, category, ...updateData } = noteData;
     
     // Remove undefined values
     const cleanUpdateData = Object.fromEntries(
@@ -121,6 +162,9 @@ export class NoteRepository {
     const note = await prisma.note.update({
       where: { id },
       data: cleanUpdateData,
+      include: {
+        category: true,
+      },
     });
 
     return note;

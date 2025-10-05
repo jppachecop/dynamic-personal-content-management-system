@@ -82,8 +82,8 @@ router.get(
       notes = await noteRepository.findFavorites(userId as string);
     } else if (tag) {
       notes = await noteRepository.findByTag(tag as string);
-    } else if (category) {
-      notes = await noteRepository.findByCategory(category as string);
+    } else if (category && userId) {
+      notes = await noteRepository.findByCategoryName(category as string, userId as string);
     } else if (userId) {
       notes = await noteRepository.findByUserId(userId as string);
     } else {

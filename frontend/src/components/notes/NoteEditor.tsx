@@ -148,10 +148,10 @@ export const NoteEditor: React.FC = () => {
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <div
               className="w-1 h-6 rounded-full flex-shrink-0"
-              style={{ backgroundColor: getCategoryColor(editedNote.category) }}
+              style={{ backgroundColor: getCategoryColor(editedNote.category?.name || '') }}
             />
             <div className="text-sm text-muted-foreground truncate">
-              {editedNote.category}
+              {editedNote.category?.name || 'Sem categoria'}
             </div>
           </div>
 
@@ -211,8 +211,8 @@ export const NoteEditor: React.FC = () => {
           )}>
             <Folder className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Select
-              value={editedNote.category}
-              onValueChange={(value) => handleFieldChange('category', value)}
+              value={editedNote.categoryId}
+              onValueChange={(value) => handleFieldChange('categoryId', value)}
             >
               <SelectTrigger className={cn(
                 isMobile ? "w-full" : "w-40"
@@ -221,7 +221,7 @@ export const NoteEditor: React.FC = () => {
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.name}>
+                  <SelectItem key={category.id} value={category.id}>
                     <div className="flex items-center gap-2">
                       <div
                         className="w-2 h-2 rounded-full"

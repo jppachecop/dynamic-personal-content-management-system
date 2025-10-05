@@ -272,7 +272,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         title,
         content,
         tags: [],
-        category: state.categories[0]?.name || "Geral",
+        categoryId: state.categories[0]?.id || "",
         userId: currentUserId,
         isFavorite: false,
       };
@@ -303,7 +303,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         title: note.title,
         content: note.content,
         tags: note.tags,
-        category: note.category,
+        categoryId: note.categoryId,
         isFavorite: note.isFavorite,
       });
       dispatch({ type: "UPDATE_NOTE", payload: updatedNote });

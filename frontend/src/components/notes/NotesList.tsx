@@ -45,7 +45,7 @@ export const NotesList: React.FC = () => {
         filtered = filtered.filter((note) => note.isFavorite);
       } else {
         filtered = filtered.filter(
-          (note) => note.category === selectedCategory
+          (note) => note.category?.name === selectedCategory
         );
       }
     }
@@ -157,7 +157,7 @@ export const NotesList: React.FC = () => {
                   isMobile && "active:scale-[0.98]"
                 )}
                 style={{
-                  borderLeftColor: getCategoryColor(note.category),
+                  borderLeftColor: getCategoryColor(note.category?.name || ""),
                 }}
                 onClick={() => selectNote(note)}
                 role="button"
@@ -211,14 +211,26 @@ export const NotesList: React.FC = () => {
                   )}
 
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      <span>
-                        {formatDistanceToNow(new Date(note.updatedAt), {
-                          addSuffix: true,
-                          locale: ptBR,
-                        })}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>
+                          {formatDistanceToNow(new Date(note.updatedAt), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
+                        </span>
+                      </div>
+                      
+                      {note.category && (
+                        <div className="flex items-center gap-1">
+                          <div 
+                            className="w-2 h-2 rounded-full" 
+                            style={{ backgroundColor: note.category.color }}
+                          />
+                          <span className="text-xs">{note.category.name}</span>
+                        </div>
+                      )}
                     </div>
 
                     {note.tags.length > 0 && (

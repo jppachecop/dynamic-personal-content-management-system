@@ -31,17 +31,18 @@ model Note {
   title      String   @db.VarChar(500)
   content    String?
   tags       String[]
-  category   String   @db.VarChar(255)
+  categoryId String   @map("category_id") @db.Uuid
   userId     String   @map("user_id") @db.Uuid
   isFavorite Boolean  @default(false) @map("is_favorite")
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   @@index([userId])
-  @@index([category])
+  @@index([categoryId])
   @@index([createdAt(sort: Desc)])
   @@index([updatedAt(sort: Desc)])
   @@index([isFavorite])
@@ -65,7 +66,8 @@ model Category {
   userId String @map("user_id") @db.Uuid
 
   // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes Note[]
 
   @@unique([name, userId])
   @@index([userId])

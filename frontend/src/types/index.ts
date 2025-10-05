@@ -12,11 +12,12 @@ export interface Note {
   title: string;
   content: string | null;
   tags: string[];
-  category: string;
+  categoryId: string;
   userId: string;
   isFavorite: boolean;
   createdAt: Date;
   updatedAt: Date;
+  category?: Category; // Optional for when we include the category relation
 }
 
 export interface Category {

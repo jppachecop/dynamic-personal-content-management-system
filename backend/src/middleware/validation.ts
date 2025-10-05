@@ -64,7 +64,7 @@ export const validateCreateNote = [
   body("content").optional().trim(),
   body("tags").isArray().withMessage("Tags must be an array"),
   body("tags.*").isString().withMessage("Each tag must be a string"),
-  body("category").trim().notEmpty().withMessage("Category is required"),
+  body("categoryId").isUUID().withMessage("Valid category ID is required"),
   body("userId").isUUID().withMessage("Valid user ID is required"),
   body("isFavorite")
     .optional()
@@ -85,11 +85,10 @@ export const validateUpdateNote = [
   body("content").optional().trim(),
   body("tags").optional().isArray().withMessage("Tags must be an array"),
   body("tags.*").isString().withMessage("Each tag must be a string"),
-  body("category")
+  body("categoryId")
     .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("Category cannot be empty"),
+    .isUUID()
+    .withMessage("Valid category ID is required"),
   body("isFavorite")
     .optional()
     .isBoolean()

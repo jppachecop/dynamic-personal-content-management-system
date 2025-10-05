@@ -158,8 +158,6 @@ export const useNoteOperations = (userId: string) => {
 
     // Utilities
     getNoteById: (id: string) => notes.data?.find((n) => n.id === id),
-    getNotesByCategory: (category: string) =>
-      notes.data?.filter((n) => n.category === category) || [],
     getFavoriteNotes: () => notes.data?.filter((n) => n.isFavorite) || [],
   };
 };
