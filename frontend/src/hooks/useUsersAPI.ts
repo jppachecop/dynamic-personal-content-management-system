@@ -130,13 +130,7 @@ export const useUserOperations = () => {
     ) => updateUser.mutateAsync({ id, data }),
     deleteUser: deleteUser.mutateAsync,
 
-    // States
-    isUpdating: updateUser.isPending,
-    isDeleting: deleteUser.isPending,
-
     // Utilities
     getUserById: (id: string) => users.data?.find((u) => u.id === id),
-    getUserByEmail: (email: string) =>
-      users.data?.find((u) => u.email === email),
   };
 };

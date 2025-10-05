@@ -117,6 +117,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
 
+        if (userOps.isLoading || categoryOps.isLoading || noteOps.isLoading) {
+          return;
+        }
+
         // Update state with current data - categories
         dispatch({ type: "SET_CATEGORIES", payload: categoryOps.categories });
 
@@ -155,7 +159,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     };
 
     initializeApp();
-  }, [noteOps.notes, state.currentUser]);
+  }, [
+    categoryOps.isLoading,
+    noteOps.isLoading,
+    noteOps.notes,
+    state.currentUser,
+    userOps.isLoading,
+    userOps.users,
+  ]);
 
   const logoutUser = () => {
     dispatch({ type: "SET_CURRENT_USER", payload: null });
