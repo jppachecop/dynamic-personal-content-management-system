@@ -87,6 +87,13 @@ export const useCreateNote = () => {
         queryKey: queryKeys.notes.byUser(newNote.userId),
       });
 
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.categories.all(false, newNote.userId)
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["categories"]
+      });
+
       // Add the new note to the cache
       queryClient.setQueryData(queryKeys.notes.detail(newNote.id), newNote);
 

@@ -10,7 +10,7 @@ export class CategoryRepository {
         userId: categoryData.userId,
       },
     });
-    
+
     return category;
   }
 
@@ -18,20 +18,20 @@ export class CategoryRepository {
     const category = await prisma.category.findUnique({
       where: { id },
     });
-    
+
     return category;
   }
 
   async findByName(name: string, userId: string): Promise<Category | null> {
     const category = await prisma.category.findUnique({
-      where: { 
+      where: {
         name_userId: {
           name,
           userId
         }
       },
     });
-    
+
     return category;
   }
 
@@ -39,7 +39,7 @@ export class CategoryRepository {
     const categories = await prisma.category.findMany({
       orderBy: { name: "asc" },
     });
-    
+
     return categories;
   }
 
@@ -48,7 +48,7 @@ export class CategoryRepository {
       where: { userId },
       orderBy: { name: "asc" },
     });
-    
+
     return categories;
   }
 
@@ -58,7 +58,7 @@ export class CategoryRepository {
     }
 
     const { id, ...updateData } = categoryData;
-    
+
     // Remove undefined values
     const cleanUpdateData = Object.fromEntries(
       Object.entries(updateData).filter(([_, value]) => value !== undefined)
@@ -87,7 +87,7 @@ export class CategoryRepository {
       where: { name },
       select: { id: true },
     });
-    
+
     return category !== null;
   }
 
@@ -95,7 +95,7 @@ export class CategoryRepository {
     const count = await prisma.note.count({
       where: { category: categoryName },
     });
-    
+
     return count;
   }
 
@@ -109,7 +109,7 @@ export class CategoryRepository {
         const usageCount = await prisma.note.count({
           where: { category: category.name },
         });
-        
+
         return {
           ...category,
           usageCount,
@@ -118,5 +118,28 @@ export class CategoryRepository {
     );
 
     return categoriesWithUsage;
+  }
+
+  async findOrCreateDefaultCategory(userId: string): Promise<Category> {
+    // Try to find an existing default category
+    let defaultCategory = await prisma.category.findFirst({
+      where: {
+        userId,
+        name: "Geral",
+      },
+    });
+
+    // If no default category exists, create one
+    if (!defaultCategory) {
+      defaultCategory = await prisma.category.create({
+        data: {
+          name: "Geral",
+          color: "#3B82F6",
+          userId,
+        },
+      });
+    }
+
+    return defaultCategory;
   }
 }

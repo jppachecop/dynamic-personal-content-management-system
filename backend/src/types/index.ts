@@ -36,7 +36,9 @@ export interface Category {
 
 // Input types for creation (omit auto-generated fields)
 export type CreateUserInput = Omit<User, "id" | "createdAt" | "updatedAt">;
-export type CreateNoteInput = Omit<Note, "id" | "createdAt" | "updatedAt">;
+export type CreateNoteInput = Omit<Note, "id" | "createdAt" | "updatedAt"> & {
+  categoryId?: string; // Make categoryId optional in creation
+};
 export type CreateTagInput = Omit<Tag, "id">;
 export type CreateCategoryInput = Omit<Category, "id">;
 
