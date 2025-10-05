@@ -19,12 +19,6 @@ export interface Note {
   updatedAt: Date;
 }
 
-export interface Tag {
-  id: string;
-  name: string;
-  count: number;
-}
-
 export interface Category {
   id: string;
   name: string;
@@ -32,19 +26,17 @@ export interface Category {
   userId: string;
 }
 
-export type ViewMode = 'grid' | 'list';
-export type SortBy = 'created' | 'updated' | 'title' | 'category';
-export type SortOrder = 'asc' | 'desc';
+export type ViewMode = "grid" | "list";
+export type SortBy = "created" | "updated" | "title" | "category";
+export type SortOrder = "asc" | "desc";
 
 export interface AppState {
   currentUser: User | null;
   selectedNote: Note | null;
   notes: Note[];
-  tags: Tag[];
   categories: Category[];
   searchQuery: string;
   selectedCategory: string | null;
-  selectedTags: string[];
   viewMode: ViewMode;
   sortBy: SortBy;
   sortOrder: SortOrder;

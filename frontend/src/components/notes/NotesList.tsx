@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useApp } from "@/contexts/AppContext";
 import { useScreenSize } from "@/hooks/use-mobile";
-import { Note } from "@/types";
 import {
   Search,
   Plus,
@@ -25,14 +24,8 @@ export const NotesList: React.FC = () => {
 
   const { isMobile } = useScreenSize();
 
-  const {
-    notes,
-    selectedNote,
-    searchQuery,
-    selectedCategory,
-    selectedTags,
-    categories,
-  } = state;
+  const { notes, selectedNote, searchQuery, selectedCategory, categories } =
+    state;
 
   const filteredNotes = useMemo(() => {
     let filtered = [...notes];
@@ -57,34 +50,34 @@ export const NotesList: React.FC = () => {
       }
     }
 
-    if (selectedTags.length > 0) {
-      filtered = filtered.filter((note) =>
-        selectedTags.some((tag) => note.tags.includes(tag))
-      );
-    }
-
     filtered.sort(
       (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
 
     return filtered;
-  }, [notes, searchQuery, selectedCategory, selectedTags]);
+  }, [notes, searchQuery, selectedCategory]);
 
   const handleNewNote = useCallback(() => {
     createNote("Nova Nota");
   }, [createNote]);
 
-  const getCategoryColor = useCallback((categoryName: string) => {
-    const category = categories.find((cat) => cat.name === categoryName);
-    return category?.color || "#3B82F6";
-  }, [categories]);
+  const getCategoryColor = useCallback(
+    (categoryName: string) => {
+      const category = categories.find((cat) => cat.name === categoryName);
+      return category?.color || "#3B82F6";
+    },
+    [categories]
+  );
 
-  const truncateContent = useCallback((content: string | null, maxLength: number = 100) => {
-    if (!content) return "";
-    if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength) + "...";
-  }, []);
+  const truncateContent = useCallback(
+    (content: string | null, maxLength: number = 100) => {
+      if (!content) return "";
+      if (content.length <= maxLength) return content;
+      return content.substring(0, maxLength) + "...";
+    },
+    []
+  );
 
   return (
     <div className="h-full flex flex-col bg-card">

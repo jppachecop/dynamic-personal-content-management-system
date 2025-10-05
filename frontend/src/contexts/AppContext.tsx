@@ -10,7 +10,6 @@ import {
   AppState,
   User,
   Note,
-  Tag,
   Category,
   ViewMode,
   SortBy,
@@ -19,7 +18,6 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { useUserOperations } from "@/hooks/useUsersAPI";
 import { useCategoryOperations } from "@/hooks/useCategoriesAPI";
-import { useTagOperations } from "@/hooks/useTagsAPI";
 import { useNoteOperations } from "@/hooks/useNotesAPI";
 
 type AppAction =
@@ -30,11 +28,9 @@ type AppAction =
   | { type: "ADD_NOTE"; payload: Note }
   | { type: "UPDATE_NOTE"; payload: Note }
   | { type: "DELETE_NOTE"; payload: string }
-  | { type: "SET_TAGS"; payload: Tag[] }
   | { type: "SET_CATEGORIES"; payload: Category[] }
   | { type: "SET_SEARCH_QUERY"; payload: string }
   | { type: "SET_SELECTED_CATEGORY"; payload: string | null }
-  | { type: "SET_SELECTED_TAGS"; payload: string[] }
   | { type: "SET_VIEW_MODE"; payload: ViewMode }
   | { type: "SET_SORT_BY"; payload: SortBy }
   | { type: "SET_SORT_ORDER"; payload: SortOrder }
@@ -44,11 +40,9 @@ const initialState: AppState = {
   currentUser: null,
   selectedNote: null,
   notes: [],
-  tags: [],
   categories: [],
   searchQuery: "",
   selectedCategory: null,
-  selectedTags: [],
   viewMode: "list",
   sortBy: "updated",
   sortOrder: "desc",
@@ -86,16 +80,12 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         selectedNote:
           state.selectedNote?.id === action.payload ? null : state.selectedNote,
       };
-    case "SET_TAGS":
-      return { ...state, tags: action.payload };
     case "SET_CATEGORIES":
       return { ...state, categories: action.payload };
     case "SET_SEARCH_QUERY":
       return { ...state, searchQuery: action.payload };
     case "SET_SELECTED_CATEGORY":
       return { ...state, selectedCategory: action.payload };
-    case "SET_SELECTED_TAGS":
-      return { ...state, selectedTags: action.payload };
     case "SET_VIEW_MODE":
       return { ...state, viewMode: action.payload };
     case "SET_SORT_BY":
@@ -123,7 +113,6 @@ interface AppContextType {
   selectNote: (note: Note | null) => void;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string | null) => void;
-  setSelectedTags: (tags: string[]) => void;
   toggleSidebar: () => void;
 }
 
@@ -131,7 +120,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const useApp = () => {
   const context = useContext(AppContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useApp must be used within an AppProvider");
   }
   return context;
@@ -149,7 +138,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const userOps = useUserOperations();
   const categoryOps = useCategoryOperations(currentUserId || "");
-  const tagOps = useTagOperations();
   // Only load notes if we have a current user
   const noteOps = useNoteOperations(currentUserId || "");
 
@@ -159,7 +147,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       if (
         userOps.isLoading ||
         categoryOps.isLoading ||
-        tagOps.isLoading ||
         (currentUserId && noteOps.isLoading)
       ) {
         return;
@@ -168,9 +155,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
 
-        // Update state with current data - categories and tags
+        // Update state with current data - categories
         dispatch({ type: "SET_CATEGORIES", payload: categoryOps.categories });
-        dispatch({ type: "SET_TAGS", payload: tagOps.tags });
 
         // Handle current user session
         if (currentUserId) {
@@ -207,10 +193,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     currentUserId,
     userOps.isLoading,
     categoryOps.isLoading,
-    tagOps.isLoading,
     noteOps.isLoading,
     categoryOps.categories.length,
-    tagOps.tags.length,
     noteOps.notes.length,
   ]);
 
@@ -364,10 +348,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: "SET_SELECTED_CATEGORY", payload: category });
   };
 
-  const setSelectedTags = (tags: string[]) => {
-    dispatch({ type: "SET_SELECTED_TAGS", payload: tags });
-  };
-
   const toggleSidebar = () => {
     dispatch({ type: "TOGGLE_SIDEBAR" });
   };
@@ -384,7 +364,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     selectNote,
     setSearchQuery,
     setSelectedCategory,
-    setSelectedTags,
     toggleSidebar,
   };
 

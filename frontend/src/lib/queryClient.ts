@@ -28,16 +28,10 @@ export const queryKeys = {
   },
   // Categories
   categories: {
-    all: (withUsage = false, userId?: string) => 
+    all: (withUsage = false, userId?: string) =>
       ["categories", { withUsage, userId }] as const,
     detail: (id: string) => ["categories", id] as const,
     usage: (id: string) => ["categories", id, "usage"] as const,
-  },
-  // Tags
-  tags: {
-    all: ["tags"] as const,
-    popular: (limit: number) => ["tags", "popular", limit] as const,
-    detail: (id: string) => ["tags", id] as const,
   },
   // Notes
   notes: {
