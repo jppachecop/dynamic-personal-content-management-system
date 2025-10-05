@@ -28,13 +28,15 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useDeleteNote, useUpdateNote } from "@/hooks/useNotesAPI";
 import { toast } from "@/hooks/use-toast";
+import { DeleteNoteDialog } from "./DeleteNoteDialog";
 
 export const NoteEditor: React.FC = () => {
-  const { selectedNote, selectNote, categories } = useApp();
+  const { selectedNote, selectNote, categories, notes } = useApp();
   const { isMobile } = useScreenSize();
   const [editedNote, setEditedNote] = useState<Note | null>(null);
   const [newTag, setNewTag] = useState("");
   const [isAddingTag, setIsAddingTag] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const deleteNote = useDeleteNote();
   const updateNote = useUpdateNote();
 
@@ -75,28 +77,43 @@ export const NoteEditor: React.FC = () => {
     }
   }, [editedNote, updateNote]);
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
+    if (!editedNote) return;
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
     if (!editedNote) return;
 
-    if (window.confirm("Tem certeza que deseja excluir esta nota?")) {
-      try {
-        await deleteNote.mutateAsync(editedNote.id);
-        selectNote(null);
+    const noteTitle = editedNote.title;
+    const remainingNotesCount = notes.length - 1;
 
-        toast({
-          title: "Nota excluída",
-          description: "Nota removida com sucesso.",
-        });
-      } catch (error) {
-        console.error("Failed to delete note:", error);
-        toast({
-          title: "Erro",
-          description: "Falha ao excluir nota.",
-          variant: "destructive",
-        });
-      }
+    try {
+      await deleteNote.mutateAsync(editedNote.id);
 
+      // Fecha o dialog
+      setShowDeleteDialog(false);
+
+      // Limpa a seleção
       selectNote(null);
+
+      // Toast de sucesso com mais informações
+      toast({
+        title: "✅ Nota excluída com sucesso",
+        description: `A nota "${noteTitle}" foi removida permanentemente. ${remainingNotesCount > 0
+            ? `Você ainda tem ${remainingNotesCount} nota${remainingNotesCount === 1 ? '' : 's'}.`
+            : 'Nenhuma nota restante.'
+          }`,
+        duration: 4000,
+      });
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+      toast({
+        title: "❌ Erro ao excluir nota",
+        description: "Não foi possível excluir a nota. Tente novamente.",
+        variant: "destructive",
+        duration: 5000,
+      });
     }
   };
 
@@ -228,13 +245,18 @@ export const NoteEditor: React.FC = () => {
               variant="ghost"
               size="icon"
               onClick={handleDelete}
+              disabled={deleteNote.isPending}
               className={cn(
-                "text-destructive hover:text-destructive/80",
+                "text-destructive hover:text-destructive/80 disabled:opacity-50",
                 isMobile && "h-8 w-8"
               )}
               aria-label="Excluir nota"
             >
-              <Trash2 className="h-4 w-4" />
+              {deleteNote.isPending ? (
+                <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
@@ -383,6 +405,14 @@ export const NoteEditor: React.FC = () => {
           )}
         />
       </div>
+
+      <DeleteNoteDialog
+        isOpen={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleConfirmDelete}
+        noteTitle={editedNote?.title || ""}
+        isDeleting={deleteNote.isPending}
+      />
     </div>
   );
 };
