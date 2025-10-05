@@ -15,15 +15,23 @@ import {
 import { cn } from "@/lib/utils";
 import CategoryDialog from "../CategoryDialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCreateNote } from "@/hooks/useNotesAPI";
 
 export const AppSidebar: React.FC = () => {
-  const { state, notes, categories, toggleSidebar, createNote, setSelectedCategory } = useApp();
-  const { sidebarOpen, selectedCategory } = state;
+  const {
+    sidebarOpen,
+    selectedCategory,
+    toggleSidebar,
+    setSelectedCategory,
+    categories,
+    notes,
+  } = useApp();
+  const { mutateAsync: createNote } = useCreateNote();
   const { user, logout } = useAuth();
   const [categoryDialogOpen, setCategoryDialogOpen] = React.useState(false);
 
   const handleNewNote = () => {
-    createNote("Nova Nota");
+    createNote({ title: "Nova Nota" });
   };
 
   const categoryCounts = categories.map((category) => ({

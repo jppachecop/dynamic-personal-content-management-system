@@ -2,18 +2,21 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { categoryApi } from "../lib/api";
 import { queryKeys } from "../lib/queryClient";
 import { Category } from "../types";
+import { useAuth } from "../contexts/AuthContext";
 /**
  * API-based Categories Hook
  * Provides category management functionality via backend API
  */
 
 // Get all categories (optionally filtered by user)
-export const useCategories = (userId?: string, withUsage = false) => {
+export const useCategories = (withUsage = false) => {
+  const { user } = useAuth();
+
   return useQuery({
-    queryKey: queryKeys.categories.all(withUsage, userId),
-    queryFn: () => categoryApi.getAll(userId, withUsage),
+    queryKey: queryKeys.categories.all(withUsage, user?.id),
+    queryFn: () => categoryApi.getAll(user?.id, withUsage),
     staleTime: 1000 * 60 * 5, // 5 minutes
-    enabled: !!userId, // Only run if userId is provided
+    enabled: !!user?.id, // Only run if userId is provided
   });
 };
 
@@ -117,8 +120,8 @@ export const useDeleteCategory = () => {
 };
 
 // Convenience hook for category operations
-export const useCategoryOperations = (userId: string) => {
-  const categories = useCategories(userId);
+export const useCategoryOperations = () => {
+  const categories = useCategories();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
 

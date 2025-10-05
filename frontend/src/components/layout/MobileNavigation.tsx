@@ -18,11 +18,11 @@ import {
   Folder,
   Settings,
   LogOut,
-  X,
   ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCreateNote } from "@/hooks/useNotesAPI";
 
 interface MobileNavigationProps {
   className?: string;
@@ -31,15 +31,22 @@ interface MobileNavigationProps {
 export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   className,
 }) => {
-  const { state, notes, categories, createNote, setSelectedCategory, selectNote } = useApp();
-  const { selectedCategory, selectedNote } = state;
+  const {
+    selectedCategory,
+    selectedNote,
+    setSelectedCategory,
+    selectNote,
+    categories,
+    notes,
+  } = useApp();
+  const { mutateAsync: createNote } = useCreateNote();
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!user) return null;
 
   const handleNewNote = () => {
-    createNote("Nova Nota");
+    createNote({ title: "Nova Nota" });
     setIsOpen(false);
   };
 

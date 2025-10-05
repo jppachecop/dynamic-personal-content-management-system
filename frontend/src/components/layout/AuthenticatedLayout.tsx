@@ -14,8 +14,7 @@ import { useScreenSize } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 export const AuthenticatedLayout: React.FC = () => {
-  const { state } = useApp();
-  const { sidebarOpen, selectedNote } = state;
+  const { sidebarOpen, selectedNote } = useApp();
   const { notesSize, editorSize, saveNotesSize } = useNotesEditorSplit();
   const { isMobile, isTablet } = useScreenSize();
 

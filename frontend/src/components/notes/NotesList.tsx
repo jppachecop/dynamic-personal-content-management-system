@@ -9,14 +9,20 @@ import { Search, Plus, Star, Calendar, Tag, FileText } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { useCreateNote } from "@/hooks/useNotesAPI";
 
 export const NotesList: React.FC = () => {
-  const { state, notes, categories, createNote, selectNote, setSearchQuery } =
-    useApp();
-
+  const {
+    selectedNote,
+    searchQuery,
+    selectedCategory,
+    selectNote,
+    setSearchQuery,
+    categories,
+    notes,
+  } = useApp();
+  const { mutateAsync: createNote } = useCreateNote();
   const { isMobile } = useScreenSize();
-
-  const { selectedNote, searchQuery, selectedCategory } = state;
 
   const filteredNotes = useMemo(() => {
     let filtered = [...notes];
@@ -50,7 +56,7 @@ export const NotesList: React.FC = () => {
   }, [notes, searchQuery, selectedCategory]);
 
   const handleNewNote = useCallback(() => {
-    createNote("Nova Nota");
+    createNote({ title: "Nova Nota" });
   }, [createNote]);
 
   const getCategoryColor = useCallback(

@@ -2,6 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { noteApi } from "../lib/api";
 import { queryKeys } from "../lib/queryClient";
 import { Note } from "../types";
+import { useAuth } from "@/contexts/AuthContext";
+import { useApp } from "@/contexts/AppContext";
+import { toast } from "./use-toast";
 
 /**
  * API-based Notes Hook
@@ -24,11 +27,13 @@ export const useNotes = (params: {
 };
 
 // Get notes by user ID
-export const useNotesByUser = (userId: string) => {
+export const useNotesByUser = () => {
+  const { user } = useAuth();
+
   return useQuery({
-    queryKey: queryKeys.notes.byUser(userId),
-    queryFn: () => noteApi.getByUserId(userId),
-    enabled: !!userId,
+    queryKey: queryKeys.notes.byUser(user?.id || ""),
+    queryFn: () => noteApi.getByUserId(user?.id || ""),
+    enabled: !!user,
     staleTime: 1000 * 60 * 2, // 2 minutes
   });
 };
@@ -55,11 +60,23 @@ export const useSearchNotes = (query: string, userId: string) => {
 // Create note mutation
 export const useCreateNote = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { selectNote, categories } = useApp();
 
   return useMutation({
-    mutationFn: (noteData: Omit<Note, "id" | "createdAt" | "updatedAt">) =>
-      noteApi.create(noteData),
-    onSuccess: (newNote) => {
+    mutationFn: ({ title }: { title: string }) => {
+      const defaultCategoryId = categories[0]?.id || "";
+
+      return noteApi.create({
+        title,
+        content: "",
+        tags: [],
+        categoryId: defaultCategoryId,
+        userId: user?.id || "",
+        isFavorite: false,
+      });
+    },
+    onSuccess: (newNote: Note) => {
       // Invalidate and refetch notes lists
       queryClient.invalidateQueries({
         queryKey: queryKeys.notes.filtered({
@@ -74,9 +91,21 @@ export const useCreateNote = () => {
       queryClient.setQueryData(queryKeys.notes.detail(newNote.id), newNote);
 
       console.log("✅ Note created via API:", newNote.title);
+
+      selectNote(newNote);
+
+      toast({
+        title: "Nota criada",
+        description: "Nova nota criada com sucesso.",
+      });
     },
     onError: (error) => {
       console.error("❌ Failed to create note via API:", error);
+      toast({
+        title: "Erro",
+        description: "Falha ao criar nota.",
+        variant: "destructive",
+      });
     },
   });
 };
@@ -139,8 +168,8 @@ export const useDeleteNote = () => {
 };
 
 // Convenience hook for note operations
-export const useNoteOperations = (userId: string) => {
-  const notes = useNotesByUser(userId);
+export const useNoteOperations = () => {
+  const notes = useNotesByUser();
   const createNote = useCreateNote();
 
   return {

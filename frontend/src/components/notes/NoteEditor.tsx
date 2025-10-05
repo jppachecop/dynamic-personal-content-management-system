@@ -30,8 +30,7 @@ import { useDeleteNote, useUpdateNote } from "@/hooks/useNotesAPI";
 import { toast } from "@/hooks/use-toast";
 
 export const NoteEditor: React.FC = () => {
-  const { state, categories, dispatch, selectNote } = useApp();
-  const { selectedNote } = state;
+  const { selectedNote, selectNote, categories } = useApp();
   const { isMobile } = useScreenSize();
   const [editedNote, setEditedNote] = useState<Note | null>(null);
   const [newTag, setNewTag] = useState("");
@@ -74,7 +73,7 @@ export const NoteEditor: React.FC = () => {
         variant: "destructive",
       });
     }
-  }, [dispatch, editedNote, updateNote]);
+  }, [editedNote, updateNote]);
 
   const handleDelete = async () => {
     if (!editedNote) return;
