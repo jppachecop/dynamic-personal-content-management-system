@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CategoryDialog from "../CategoryDialog";
+import UserSettingsDialog from "../users/UserSettingsDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCreateNote } from "@/hooks/useNotesAPI";
 
@@ -185,16 +186,20 @@ export const AppSidebar: React.FC = () => {
 
         <div className="p-2 border-t border-sidebar-border">
           <div className="space-y-1">
-            <Button
-              variant="ghost"
-              className={cn(
-                "justify-start text-muted-foreground hover:text-foreground transition-colors",
-                sidebarOpen ? "w-full" : "w-full p-2"
-              )}
-            >
-              <Settings className="h-4 w-4" />
-              {sidebarOpen && <span className="ml-2">Configurações</span>}
-            </Button>
+            <UserSettingsDialog
+              trigger={
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "justify-start text-muted-foreground hover:text-foreground transition-colors",
+                    sidebarOpen ? "w-full" : "w-full p-2"
+                  )}
+                >
+                  <Settings className="h-4 w-4" />
+                  {sidebarOpen && <span className="ml-2">Configurações</span>}
+                </Button>
+              }
+            />
 
             <Button
               variant="ghost"

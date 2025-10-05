@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, ReactNode } from "react";
+import React, { createContext, useContext, useMemo, useCallback, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { User } from "@/types";
@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
+  updateUser: (userData: User) => void;
   isAuthenticated: boolean;
 }
 
@@ -22,33 +23,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
 
   // Call this function when you want to authenticate the user
-  const login = (userData: User) => {
+  const login = useCallback((userData: User) => {
     setUser(userData);
     navigate("/home");
     toast({
       title: "Login realizado",
       description: `Bem-vindo, ${userData.name}!`,
     });
-  };
+  }, [setUser, navigate]);
 
   // Call this function to sign out logged in user
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     navigate("/", { replace: true });
     toast({
       title: "Logout realizado",
       description: "Você foi desconectado com sucesso.",
     });
-  };
+  }, [setUser, navigate]);
+
+  // Call this function to update user data
+  const updateUser = useCallback((userData: User) => {
+    setUser(userData);
+    toast({
+      title: "Perfil atualizado",
+      description: "Suas informações foram atualizadas com sucesso.",
+    });
+  }, [setUser]);
 
   const value = useMemo(
     () => ({
       user,
       login,
       logout,
+      updateUser,
       isAuthenticated: !!user,
     }),
-    [user]
+    [user, login, logout, updateUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -49,7 +49,17 @@ export const validateUpdateUser = [
     .isEmail()
     .withMessage("Valid email is required")
     .normalizeEmail(),
-  body("avatar").optional().isURL().withMessage("Avatar must be a valid URL"),
+  body("avatar")
+    .optional()
+    .custom((value) => {
+      if (value === "" || value === null || value === undefined) {
+        return true; // Allow empty values
+      }
+      if (!/^https?:\/\/.+/.test(value)) {
+        throw new Error("Avatar must be a valid URL");
+      }
+      return true;
+    }),
   handleValidationErrors,
 ];
 
