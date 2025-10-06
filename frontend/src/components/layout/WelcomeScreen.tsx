@@ -214,7 +214,7 @@ export const WelcomeScreen: React.FC = () => {
         </Card>
 
         <div className="text-center text-sm text-muted-foreground">
-          <p>✨ Organize suas notas • 🏷️ Sistema de tags • 🔍 Busca avançada</p>
+          <p>✨ Organize suas notas • 🏷️ Sistema de categorias • 🔍 Busca</p>
         </div>
       </div>
     </div>
