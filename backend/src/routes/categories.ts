@@ -1,6 +1,10 @@
 import { Router, Request, Response } from "express";
 import { CategoryRepository } from "../repositories/CategoryRepository";
-import { ApiResponse, CreateCategoryInput, UpdateCategoryInput } from "../types";
+import {
+  ApiResponse,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+} from "../types";
 import {
   validateCreateCategory,
   validateUpdateCategory,
@@ -79,7 +83,7 @@ router.get(
     const { userId, withUsage } = req.query;
 
     let categories;
-    if (userId && typeof userId === 'string') {
+    if (userId && typeof userId === "string") {
       categories = await categoryRepository.findByUserId(userId);
     } else {
       categories = await categoryRepository.findAll();
@@ -89,7 +93,7 @@ router.get(
       categories = await Promise.all(
         categories.map(async (category) => {
           const usageCount = await categoryRepository.getCategoryUsageCount(
-            category.name
+            category.id
           );
           return {
             ...category,
@@ -235,7 +239,10 @@ router.put(
 
     // Check if name is being updated and already exists for this user
     if (updateData.name && updateData.name !== existingCategory.name) {
-      const nameExists = await categoryRepository.findByName(updateData.name, existingCategory.userId);
+      const nameExists = await categoryRepository.findByName(
+        updateData.name,
+        existingCategory.userId
+      );
       if (nameExists) {
         res.status(409).json({
           success: false,

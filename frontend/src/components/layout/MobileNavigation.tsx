@@ -62,7 +62,9 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
 
   const categoryCounts = categories.map((category) => ({
     ...category,
-    count: notes.filter((note) => note.category.id === category.id).length,
+    count: category.usageCount
+      ? category.usageCount
+      : notes.filter((note) => note.category?.id === category.id).length,
   }));
 
   const favoriteCount = notes.filter((note) => note.isFavorite).length;
@@ -192,10 +194,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
               <div className="p-4 border-t space-y-2">
                 <UserSettingsDialog
                   trigger={
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start"
-                    >
+                    <Button variant="ghost" className="w-full justify-start">
                       <Settings className="h-4 w-4 mr-2" />
                       Configurações
                     </Button>

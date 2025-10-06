@@ -1,10 +1,8 @@
 import axios from "axios";
 import { User, Note, Category } from "@/types";
 
-// API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3002";
 
-// Create axios instance
 export const apiClient = axios.create({
   baseURL: `${API_BASE_URL}/api`,
   headers: {
@@ -13,7 +11,6 @@ export const apiClient = axios.create({
   timeout: 10000, // 10 seconds
 });
 
-// Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -22,7 +19,6 @@ apiClient.interceptors.response.use(
   }
 );
 
-// API Response Types
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
@@ -30,7 +26,6 @@ export interface ApiResponse<T = unknown> {
   error?: string;
 }
 
-// Generic API functions
 export const api = {
   // Generic GET request
   get: async <T>(endpoint: string): Promise<T> => {
@@ -69,10 +64,7 @@ export const api = {
   },
 };
 
-// User API functions
 export const userApi = {
-  getAll: () => api.get<User[]>("/users"),
-  getById: (id: string) => api.get<User>(`/users/${id}`),
   login: (email: string) => api.post<User>(`/users/login`, { email }),
   create: (user: Omit<User, "id" | "createdAt" | "updatedAt">) =>
     api.post<User>("/users", user),
@@ -83,7 +75,6 @@ export const userApi = {
   delete: (id: string) => api.delete(`/users/${id}`),
 };
 
-// Category API functions
 export const categoryApi = {
   getAll: (userId?: string, withUsage?: boolean) => {
     const params = new URLSearchParams();
@@ -94,36 +85,11 @@ export const categoryApi = {
       `/categories${queryString ? "?" + queryString : ""}`
     );
   },
-  getById: (id: string) => api.get<Category>(`/categories/${id}`),
   create: (category: Omit<Category, "id">) =>
     api.post<Category>("/categories", category),
-  update: (id: string, category: Partial<Omit<Category, "id">>) =>
-    api.put<Category>(`/categories/${id}`, category),
-  delete: (id: string) => api.delete(`/categories/${id}`),
-  getUsage: (id: string) =>
-    api.get<{ count: number }>(`/categories/${id}/usage`),
 };
 
-// Note API functions
 export const noteApi = {
-  getAll: (params?: {
-    userId?: string;
-    category?: string;
-    tag?: string;
-    favorites?: boolean;
-    search?: string;
-  }) => {
-    const searchParams = new URLSearchParams();
-    if (params?.userId) searchParams.append("userId", params.userId);
-    if (params?.category) searchParams.append("category", params.category);
-    if (params?.tag) searchParams.append("tag", params.tag);
-    if (params?.favorites) searchParams.append("favorites", "true");
-    if (params?.search) searchParams.append("search", params.search);
-
-    const queryString = searchParams.toString();
-    return api.get<Note[]>(`/notes${queryString ? `?${queryString}` : ""}`);
-  },
-  getById: (id: string) => api.get<Note>(`/notes/${id}`),
   getByUserId: (userId: string) => api.get<Note[]>(`/notes/user/${userId}`),
   create: (note: Omit<Note, "id" | "createdAt" | "updatedAt">) =>
     api.post<Note>("/notes", note),
@@ -132,14 +98,6 @@ export const noteApi = {
     note: Partial<Omit<Note, "id" | "createdAt" | "updatedAt">>
   ) => api.put<Note>(`/notes/${id}`, note),
   delete: (id: string) => api.delete(`/notes/${id}`),
-};
-
-// Health check
-export const healthApi = {
-  check: () =>
-    api.get<{ message: string; timestamp: string; environment: string }>(
-      "/health"
-    ),
 };
 
 export default api;

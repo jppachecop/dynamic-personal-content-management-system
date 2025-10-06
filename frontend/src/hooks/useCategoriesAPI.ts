@@ -8,14 +8,13 @@ import { useAuth } from "../contexts/AuthContext";
  * Provides category management functionality via backend API
  */
 
-// Get all categories (optionally filtered by user)
-export const useCategories = (withUsage = false) => {
+// Get all categories
+export const useCategories = (withUsage = true) => {
   const { user } = useAuth();
 
   return useQuery({
     queryKey: queryKeys.categories.all(withUsage, user?.id),
     queryFn: () => categoryApi.getAll(user?.id, withUsage),
-    staleTime: 1000 * 60 * 5, // 5 minutes
     enabled: !!user?.id, // Only run if userId is provided
   });
 };

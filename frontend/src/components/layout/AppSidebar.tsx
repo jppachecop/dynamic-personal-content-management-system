@@ -37,7 +37,9 @@ export const AppSidebar: React.FC = () => {
 
   const categoryCounts = categories.map((category) => ({
     ...category,
-    count: notes.filter((note) => note.category?.id === category.id).length,
+    count: category.usageCount
+      ? category.usageCount
+      : notes.filter((note) => note.category?.id === category.id).length,
   }));
 
   const favoriteCount = notes.filter((note) => note.isFavorite).length;

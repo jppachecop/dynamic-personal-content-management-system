@@ -25,4 +25,5 @@ export interface Category {
   name: string;
   color: string;
   userId: string;
+  usageCount?: number;
 }
