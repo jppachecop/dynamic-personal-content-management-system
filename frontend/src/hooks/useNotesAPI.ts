@@ -11,21 +11,6 @@ import { toast } from "./use-toast";
  * Provides note management functionality via backend API
  */
 
-// Get all notes with optional filters
-export const useNotes = (params: {
-  userId: string;
-  category?: string;
-  tag?: string;
-  favorites?: boolean;
-  search?: string;
-}) => {
-  return useQuery({
-    queryKey: params ? queryKeys.notes.filtered(params) : queryKeys.notes.all,
-    queryFn: () => noteApi.getAll(params),
-    staleTime: 1000 * 60 * 2, // 2 minutes (notes change more frequently)
-  });
-};
-
 // Get notes by user ID
 export const useNotesByUser = () => {
   const { user } = useAuth();
@@ -34,26 +19,6 @@ export const useNotesByUser = () => {
     queryKey: queryKeys.notes.byUser(user?.id || ""),
     queryFn: () => noteApi.getByUserId(user?.id || ""),
     enabled: !!user,
-    staleTime: 1000 * 60 * 2, // 2 minutes
-  });
-};
-
-// Get note by ID
-export const useNote = (id: string) => {
-  return useQuery({
-    queryKey: queryKeys.notes.detail(id),
-    queryFn: () => noteApi.getById(id),
-    enabled: !!id,
-  });
-};
-
-// Search notes
-export const useSearchNotes = (query: string, userId: string) => {
-  return useQuery({
-    queryKey: queryKeys.notes.search(query, userId),
-    queryFn: () => noteApi.getAll({ search: query, userId }),
-    enabled: !!query && query.length > 0,
-    staleTime: 1000 * 30, // 30 seconds for search results
   });
 };
 
@@ -77,25 +42,9 @@ export const useCreateNote = () => {
       });
     },
     onSuccess: (newNote: Note) => {
-      // Invalidate and refetch notes lists
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.notes.filtered({
-          userId: newNote.userId,
-        }),
-      });
       queryClient.invalidateQueries({
         queryKey: queryKeys.notes.byUser(newNote.userId),
       });
-
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.categories.all(false, newNote.userId)
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["categories"]
-      });
-
-      // Add the new note to the cache
-      queryClient.setQueryData(queryKeys.notes.detail(newNote.id), newNote);
 
       console.log("✅ Note created via API:", newNote.title);
 
@@ -129,16 +78,7 @@ export const useUpdateNote = () => {
       id: string;
       data: Partial<Omit<Note, "id" | "createdAt" | "updatedAt">>;
     }) => noteApi.update(id, data),
-    onSuccess: (updatedNote, { id }) => {
-      // // Update the note in the cache
-      // queryClient.setQueryData(queryKeys.notes.detail(id), updatedNote);
-
-      // Invalidate notes lists to ensure consistency
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.notes.filtered({
-          userId: updatedNote.userId,
-        }),
-      });
+    onSuccess: (updatedNote) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.notes.byUser(updatedNote.userId),
       });
@@ -154,17 +94,14 @@ export const useUpdateNote = () => {
 // Delete note mutation
 export const useDeleteNote = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: noteApi.delete,
     onSuccess: (_, deletedId) => {
-      // Remove note from cache
-      queryClient.removeQueries({
-        queryKey: queryKeys.notes.detail(deletedId),
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notes.byUser(user?.id),
       });
-
-      // Invalidate notes lists
-      queryClient.invalidateQueries({ queryKey: queryKeys.notes.all });
 
       console.log("✅ Note deleted via API:", deletedId);
     },
@@ -172,20 +109,4 @@ export const useDeleteNote = () => {
       console.error("❌ Failed to delete note via API:", error);
     },
   });
-};
-
-// Convenience hook for note operations
-export const useNoteOperations = () => {
-  const notes = useNotesByUser();
-  const createNote = useCreateNote();
-
-  return {
-    // Data
-    notes: notes.data || [],
-    isLoading: notes.isLoading,
-    error: notes.error,
-
-    // Operations
-    createNote: createNote.mutateAsync,
-  };
 };
