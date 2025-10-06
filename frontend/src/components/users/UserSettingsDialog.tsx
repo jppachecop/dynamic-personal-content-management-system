@@ -9,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Sheet,
@@ -18,7 +17,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
@@ -59,7 +57,9 @@ export const UserSettingsDialog: React.FC<UserSettingsDialogProps> = ({
 
     try {
       // Preparar dados para envio - sempre incluir todos os campos
-      const dataToUpdate: Partial<Omit<User, "id" | "createdAt" | "updatedAt">> = {
+      const dataToUpdate: Partial<
+        Omit<User, "id" | "createdAt" | "updatedAt">
+      > = {
         name: formData.name.trim(),
         email: formData.email.trim(),
         avatar: formData.avatar.trim() || null, // Enviar null se vazio para remover
@@ -120,7 +120,10 @@ export const UserSettingsDialog: React.FC<UserSettingsDialogProps> = ({
         {/* Avatar Section */}
         <div className="flex items-center space-x-4">
           <Avatar className="h-16 w-16">
-            <AvatarImage src={formData.avatar || undefined} alt={formData.name} />
+            <AvatarImage
+              src={formData.avatar || undefined}
+              alt={formData.name}
+            />
             <AvatarFallback className="text-lg">
               {formData.name.charAt(0).toUpperCase()}
             </AvatarFallback>
@@ -134,7 +137,9 @@ export const UserSettingsDialog: React.FC<UserSettingsDialogProps> = ({
                     id="avatar"
                     placeholder="https://example.com/avatar.jpg"
                     value={formData.avatar}
-                    onChange={(e) => handleInputChange("avatar", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("avatar", e.target.value)
+                    }
                     className="flex-1"
                   />
                   <Button
@@ -187,11 +192,7 @@ export const UserSettingsDialog: React.FC<UserSettingsDialogProps> = ({
       <div className="flex-col space-y-2 sm:flex-row sm:space-y-0 mt-6">
         {isEditing ? (
           <div className="flex w-full gap-2">
-            <Button
-              variant="outline"
-              onClick={resetForm}
-              className="flex-1"
-            >
+            <Button variant="outline" onClick={resetForm} className="flex-1">
               Cancelar
             </Button>
             <Button
@@ -224,9 +225,7 @@ export const UserSettingsDialog: React.FC<UserSettingsDialogProps> = ({
   if (isMobile) {
     return (
       <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-        <SheetTrigger asChild>
-          {trigger || defaultTrigger}
-        </SheetTrigger>
+        <SheetTrigger asChild>{trigger || defaultTrigger}</SheetTrigger>
         <SheetContent side="bottom" className="h-[90vh]">
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2">
@@ -238,9 +237,7 @@ export const UserSettingsDialog: React.FC<UserSettingsDialogProps> = ({
             </SheetDescription>
           </SheetHeader>
 
-          <div className="mt-6 overflow-y-auto flex-1">
-            {renderContent()}
-          </div>
+          <div className="mt-6 overflow-y-auto flex-1">{renderContent()}</div>
         </SheetContent>
       </Sheet>
     );
@@ -248,9 +245,7 @@ export const UserSettingsDialog: React.FC<UserSettingsDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        {trigger || defaultTrigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
       <DialogContent className="mx-2 max-w-md sm:mx-auto max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
