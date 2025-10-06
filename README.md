@@ -3,12 +3,12 @@
 <div align="center">
 
 ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.6.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.18-000000?style=for-the-badge&logo=express&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15.x-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-5.7-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5.4.19-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![TanStack Query](https://img.shields.io/badge/TanStack_Query-5.90-FF4154?style=for-the-badge&logo=react-query&logoColor=white)
 
@@ -60,22 +60,22 @@ Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend
 
 - ✅ **Cadastro e Login**: Autenticação baseada em email
 - ✅ **Perfil de Usuário**: Gerenciamento de informações pessoais
-- ✅ **Avatar Personalizado**: Upload e exibição de imagem de perfil
+- ⚠️ **Avatar**: Campo disponível no perfil (upload não implementado)
 
 ### **📝 Gestão Avançada de Notas**
 
 #### **Criação e Edição**
 
-- ✅ **Editor Intuitivo**: Interface WYSIWYG para criação de notas
-- ✅ **Auto-save**: Salvamento automático das alterações
+- ✅ **Editor de Texto**: Interface simples e intuitiva para criação de notas
+- ✅ **Salvamento Manual**: Botão de salvar para persistir alterações
 - ✅ **Títulos Dinâmicos**: Títulos editáveis inline
-- ✅ **Conteúdo Rico**: Suporte a texto formatado e quebras de linha
+- ✅ **Conteúdo de Texto**: Suporte a texto simples com quebras de linha
 
 #### **Organização Inteligente**
 
 - ✅ **Categorias Personalizadas**: Sistema de categorias com cores customizáveis
 - ✅ **Sistema de Favoritos**: Marcar notas importantes como favoritas
-- ✅ **Busca Avançada**: Busca por título
+- ✅ **Busca por Título**: Sistema de busca simples e eficiente
 - ✅ **Filtros Dinâmicos**: Filtrar por categoria e favoritos
 
 #### **Visualização e Interface**
@@ -111,8 +111,8 @@ Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend
 | Tecnologia           | Versão | Propósito                     |
 | -------------------- | ------ | ----------------------------- |
 | **React**            | 18.3.1 | Framework UI principal        |
-| **TypeScript**       | 5.6.3  | Tipagem estática              |
-| **Vite**             | 6.x    | Build tool e dev server       |
+| **TypeScript**       | 5.8.3  | Tipagem estática              |
+| **Vite**             | 5.4.19 | Build tool e dev server       |
 | **TanStack Query**   | 5.90.2 | Gerenciamento de estado/cache |
 | **React Router DOM** | 6.30.1 | Roteamento SPA                |
 
@@ -236,16 +236,68 @@ graph TB
 
 ## ⚡ **Instalação e Configuração**
 
+> **💡 Escolha uma das duas opções abaixo:**
+>
+> - **🐳 Docker** (Recomendado) - Mais simples e rápido
+> - **⚙️ Manual** - Controle total do ambiente
+
+---
+
+## **🐳 Opção 1: Instalação com Docker (Recomendado)**
+
 ### **📋 Pré-requisitos**
 
-Antes de começar, certifique-se de ter instalado:
+- **Docker** e **Docker Compose** ([Download](https://docs.docker.com/get-docker/))
+- **Git** ([Download](https://git-scm.com/))
+
+### **🚀 Instalação em 2 Passos**
+
+#### **1. Clone e Execute**
+
+```bash
+# Clone o repositório
+git clone https://github.com/jppachecop/dynamic-personal-content-management-system.git
+cd dynamic-personal-content-management-system
+
+# Execute tudo com Docker
+docker-compose up --build
+```
+
+#### **2. Acesse a Aplicação**
+
+**🎉 Pronto! A aplicação estará rodando em:**
+
+- **🌐 Frontend**: http://localhost:8080
+- **🔗 Backend API**: http://localhost:3001
+- **📚 Documentação**: http://localhost:3001/api-docs
+- **🗄️ Prisma Studio**: http://localhost:5555
+
+### **🛠️ Comandos Docker Úteis**
+
+```bash
+# Executar em segundo plano
+docker-compose up -d --build
+
+# Ver logs em tempo real
+docker-compose logs -f
+
+# Parar todos os serviços
+docker-compose down
+
+# Reset completo (remove dados do banco)
+docker-compose down -v
+```
+
+## **⚙️ Opção 2: Instalação Manual**
+
+### **📋 Pré-requisitos**
 
 - **Node.js** 18+ ([Download](https://nodejs.org/))
 - **npm** ou **yarn** ou **pnpm**
 - **Git** ([Download](https://git-scm.com/))
 - **PostgreSQL** 15+ ([Download](https://www.postgresql.org/download/))
 
-### **🚀 Instalação Rápida**
+### **🚀 Instalação Passo a Passo**
 
 #### **1. Clone o Repositório**
 
@@ -298,7 +350,7 @@ npm run dev
 
 ```bash
 # Em um novo terminal, navegue para o frontend
-cd frontend
+cd ../frontend
 
 # Instale as dependências
 npm install
@@ -316,69 +368,18 @@ cp .env.example .env
 # Execute o servidor de desenvolvimento
 npm run dev
 
-# O frontend estará disponível em: http://localhost:5173
+# O frontend estará disponível em: http://localhost:8080
 ```
 
-### **🐳 Instalação com Docker (Recomendado)**
+**🎉 Aplicação rodando em:**
 
-Para uma instalação mais simples usando Docker:
-
-```bash
-# Na raiz do projeto
-docker-compose up --build
-
-# Para executar em segundo plano
-docker-compose up -d --build
-```
-
-**Serviços disponíveis:**
-
-- **Frontend**: http://localhost:5173
+- **Frontend**: http://localhost:8080
 - **Backend**: http://localhost:3001
 - **API Docs**: http://localhost:3001/api-docs
-- **PostgreSQL**: localhost:5432
-- **Prisma Studio**: http://localhost:5555
 
-**Para parar os serviços:**
+---
 
-```bash
-docker-compose down
-```
-
-**Para limpar volumes (reset completo):**
-
-```bash
-docker-compose down -v
-```
-
-### **🔧 Scripts Disponíveis**
-
-#### **Frontend**
-
-```bash
-npm run dev          # Servidor de desenvolvimento
-npm run build        # Build de produção
-npm run build:dev    # Build de desenvolvimento
-npm run lint         # Executa ESLint
-npm run lint:fix     # Corrige problemas do ESLint
-npm run preview      # Preview do build
-npm run type-check   # Verificação de tipos TypeScript
-```
-
-#### **Backend**
-
-```bash
-npm run dev          # Servidor de desenvolvimento com hot reload
-npm run build        # Compila TypeScript para JavaScript
-npm run start        # Executa a versão compilada
-npm run migrate      # Executa migrações do Prisma
-npm run db:seed      # Popula o banco com dados iniciais
-npm run db:studio    # Interface visual do banco (Prisma Studio)
-npm run db:reset     # Reset completo do banco
-npm run docs         # Mostra URL da documentação da API
-```
-
-### **🔐 Configuração de Ambiente**
+## **🔐 Configuração de Ambiente**
 
 #### **Backend (.env)**
 
@@ -390,9 +391,8 @@ DATABASE_URL="postgresql://sgcpd_user:sgcpd_password@localhost:5432/sgcpd_databa
 PORT=3001
 NODE_ENV=development
 
-# Segurança (para produção)
-JWT_SECRET="seu-jwt-secret-aqui"
-CORS_ORIGIN="http://localhost:5173"
+# Segurança
+CORS_ORIGIN="http://localhost:8080"
 ```
 
 #### **Frontend (.env)**
@@ -401,9 +401,6 @@ CORS_ORIGIN="http://localhost:5173"
 # URL da API
 VITE_API_URL=http://localhost:3001
 
-# Configurações de desenvolvimento
-VITE_APP_NAME="SGCPD"
-VITE_APP_VERSION="1.0.0"
 ```
 
 ---
@@ -479,7 +476,7 @@ CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
-  avatar TEXT,
+  avatar TEXT, -- Campo disponível mas upload não implementado
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -498,7 +495,7 @@ CREATE TABLE notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title VARCHAR(500) NOT NULL,
   content TEXT,
-  tags TEXT[],
+  tags TEXT[], -- Tags como array de strings (sem tabela separada)
   category_id UUID NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   is_favorite BOOLEAN DEFAULT FALSE,
@@ -659,7 +656,6 @@ PATCH  /api/notes/:id/favorite # Toggle favorito
 npm run lint         # ESLint para análise de código
 npm run lint:fix     # Correção automática de problemas
 npm run type-check   # Verificação de tipos TypeScript
-npm run build:analyze # Análise do bundle de produção
 ```
 
 #### **Backend**
@@ -672,194 +668,6 @@ npm run db:seed      # Popular banco com dados de teste
 ```
 
 ---
-
-## 🤝 **Contribuição e Desenvolvimento**
-
-### **💡 Como Contribuir**
-
-1. **Fork** o projeto no GitHub
-2. **Crie** uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. **Commit** suas mudanças (`git commit -m 'feat: adiciona MinhaFeature'`)
-4. **Push** para a branch (`git push origin feature/MinhaFeature`)
-5. **Abra** um Pull Request detalhado
-
-### **📋 Guidelines de Desenvolvimento**
-
-#### **📝 Padrões de Código**
-
-```typescript
-// ✅ Bom: Componente bem estruturado
-interface NoteCardProps {
-  note: Note;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-}
-
-export function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
-  const { mutate: toggleFavorite } = useToggleFavorite();
-
-  return (
-    <Card className="p-4 hover:shadow-md transition-shadow">
-      <CardHeader>
-        <CardTitle className="line-clamp-1">{note.title}</CardTitle>
-      </CardHeader>
-      {/* ... resto do componente */}
-    </Card>
-  );
-}
-```
-
-#### **🎨 Convenções de Estilo**
-
-```typescript
-// ✅ Naming conventions
-const useNotesAPI = () => {
-  /* hook personalizado */
-};
-const NotesRepository = {
-  /* repository pattern */
-};
-const validateNoteInput = () => {
-  /* validation function */
-};
-
-// ✅ File naming
-NoteCard.tsx; // PascalCase para componentes
-useNotesAPI.ts; // camelCase para hooks
-notes.routes.ts; // kebab-case para arquivos comuns
-```
-
-#### **🔗 Estrutura de Commits**
-
-```bash
-# Tipos de commit permitidos
-feat:     # Nova funcionalidade
-fix:      # Correção de bug
-docs:     # Mudanças na documentação
-style:    # Formatação, ponto e vírgula, etc
-refactor: # Refatoração de código
-test:     # Adição de testes
-chore:    # Tarefas de manutenção
-perf:     # Melhorias de performance
-
-# Exemplos
-feat(notes): adiciona sistema de tags nas notas
-fix(api): corrige validação de email duplicado
-docs(readme): atualiza instruções de instalação
-refactor(components): melhora estrutura do NoteEditor
-```
-
-### **🐛 Reportar Issues**
-
-Use o template do GitHub Issues:
-
-```markdown
-**Descrição do Bug**
-Descrição clara e concisa do problema.
-
-**Passos para Reproduzir**
-
-1. Vá para '...'
-2. Clique em '...'
-3. Role até '...'
-4. Veja o erro
-
-**Comportamento Esperado**
-O que deveria acontecer.
-
-**Screenshots**
-Se aplicável, adicione screenshots.
-
-**Ambiente:**
-
-- OS: [e.g. Windows 11, macOS 13]
-- Browser: [e.g. Chrome 118, Firefox 119]
-- Versão do Node: [e.g. 18.17.0]
-- Versão do PostgreSQL: [e.g. 15.4]
-```
-
-### **✨ Sugestões de Features**
-
-```markdown
-**Descrição da Feature**
-Descrição clara da funcionalidade desejada.
-
-**Problema que Resolve**
-Qual problema esta feature resolve?
-
-**Solução Proposta**
-Como você gostaria que funcionasse?
-
-**Alternativas Consideradas**
-Outras abordagens que você considerou?
-
-**Contexto Adicional**
-Mockups, referências, links úteis.
-```
-
-### **🔧 Setup de Desenvolvimento**
-
-#### **Configuração do Ambiente**
-
-```bash
-# Clone o repositório
-git clone https://github.com/jppachecop/dynamic-personal-content-management-system.git
-cd dynamic-personal-content-management-system
-
-# Configure hooks do Git (opcional)
-npx husky install
-
-# Configure o backend
-cd backend
-npm install
-cp .env.example .env
-# Edite o .env com suas configurações
-
-# Configure o frontend
-cd ../frontend
-npm install
-cp .env.example .env
-# Edite o .env com suas configurações
-
-# Execute com Docker (recomendado para desenvolvimento)
-cd ..
-docker-compose up --build
-```
-
-#### **Ferramentas Recomendadas**
-
-- **VS Code** com extensões:
-  - TypeScript e JavaScript
-  - Prisma
-  - Tailwind CSS IntelliSense
-  - ESLint
-  - Prettier
-  - GitLens
-  - Thunder Client (para testes de API)
-
----
-
-## 📜 **Licença e Autoria**
-
-### **📄 Licença**
-
-Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](LICENSE) para detalhes completos.
-
-```
-MIT License
-
-Copyright (c) 2024 SGCPD Development Team
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
 
 ### **👥 Equipe de Desenvolvimento**
 
@@ -874,9 +682,10 @@ copies or substantial portions of the Software.
 
 **Instituição:** Universidade Federal de Goiás - Programa de Residência em TI  
 **Disciplina:** Frontend Development  
-**Professor:** MSc. Reinaldo de Souza Júnior  
+**Professor:** MSc. Reinaldo de Souza Júnior
 
 ---
+
 ### **🌟 Ferramentas de Desenvolvimento**
 
 - **[VS Code](https://code.visualstudio.com/)** - Editor de código
