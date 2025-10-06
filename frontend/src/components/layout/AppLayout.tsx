@@ -1,8 +1,8 @@
 import React from "react";
 import { AuthenticatedLayout } from "./AuthenticatedLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { WelcomeScreen } from "../ui/WelcomeScreen";
-import { LoadingScreen } from "../ui/LoadingScreen";
+import { WelcomeScreen } from "./WelcomeScreen";
+import { LoadingScreen } from "./LoadingScreen";
 import { AppProvider } from "@/contexts/AppContext";
 import { useCategories } from "@/hooks/useCategoriesAPI";
 import { useNotesByUser } from "@/hooks/useNotesAPI";

@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 8080
 
 # Iniciar servidor de desenvolvimento
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "8080"]

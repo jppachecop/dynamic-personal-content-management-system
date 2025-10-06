@@ -6,104 +6,10 @@ import {
   validateUpdateUser,
   validateId,
 } from "../middleware/validation";
-import { asyncHandler } from "../middleware/errorHandler";
+import { asyncHandler } from "../middleware/handlers";
 
 const router = Router();
 const userRepository = new UserRepository();
-
-/**
- * @swagger
- * /api/users:
- *   get:
- *     summary: Get all users
- *     tags: [Users]
- *     responses:
- *       200:
- *         description: List of all users
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
- *       500:
- *         $ref: '#/components/responses/ServerError'
- */
-router.get(
-  "/",
-  asyncHandler(async (_, res: Response<ApiResponse>) => {
-    const users = await userRepository.findAll();
-    res.json({
-      success: true,
-      data: users,
-    });
-  })
-);
-
-/**
- * @swagger
- * /api/users/{id}:
- *   get:
- *     summary: Get user by ID
- *     tags: [Users]
- *     parameters:
- *       - $ref: '#/components/parameters/IdParam'
- *     responses:
- *       200:
- *         description: User found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   $ref: '#/components/schemas/User'
- *       400:
- *         $ref: '#/components/responses/ValidationError'
- *       404:
- *         $ref: '#/components/responses/NotFound'
- *       500:
- *         $ref: '#/components/responses/ServerError'
- */
-router.get(
-  "/:id",
-  validateId,
-  asyncHandler(async (req: Request, res: Response<ApiResponse>) => {
-    const { id } = req.params;
-
-    if (!id) {
-      res.status(400).json({
-        success: false,
-        error: "Invalid ID",
-      });
-      return;
-    }
-
-    const user = await userRepository.findById(id);
-
-    if (!user) {
-      res.status(404).json({
-        success: false,
-        error: "User not found",
-      });
-      return;
-    }
-
-    res.json({
-      success: true,
-      data: user,
-    });
-  })
-);
 
 /**
  * @swagger

@@ -13,7 +13,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import CategoryDialog from "../ui/CategoryDialog";
+import CategoryDialog from "../categories/category-dialog";
 import UserSettingsDialog from "../users/UserSettingsDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCreateNote } from "@/hooks/useNotesAPI";

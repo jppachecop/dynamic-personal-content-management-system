@@ -9,154 +9,12 @@ import {
   validateId,
   validateUserId,
 } from "../middleware/validation";
-import { asyncHandler } from "../middleware/errorHandler";
+import { asyncHandler } from "../middleware/handlers";
 
 const router = Router();
 const noteRepository = new NoteRepository();
 const userRepository = new UserRepository();
 const categoryRepository = new CategoryRepository();
-
-/**
- * @swagger
- * /api/notes:
- *   get:
- *     summary: Get all notes with optional filters
- *     tags: [Notes]
- *     parameters:
- *       - name: userId
- *         in: query
- *         description: Filter notes by user ID
- *         schema:
- *           type: string
- *           format: uuid
- *       - name: category
- *         in: query
- *         description: Filter notes by category name
- *         schema:
- *           type: string
- *       - name: tag
- *         in: query
- *         description: Filter notes by tag name
- *         schema:
- *           type: string
- *       - name: favorites
- *         in: query
- *         description: Filter favorite notes (requires userId)
- *         schema:
- *           type: string
- *           enum: [true, false]
- *       - name: search
- *         in: query
- *         description: Search notes by title and content (requires userId)
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: List of notes
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Note'
- *       500:
- *         $ref: '#/components/responses/ServerError'
- */
-router.get(
-  "/",
-  asyncHandler(async (req: Request, res: Response<ApiResponse>) => {
-    const { userId, category, tag, favorites, search } = req.query;
-
-    let notes;
-
-    if (search) {
-      notes = await noteRepository.search(
-        search as string,
-        userId as string
-      );
-    } else if (favorites === "true") {
-      notes = await noteRepository.findFavorites(userId as string);
-    } else if (tag) {
-      notes = await noteRepository.findByTag(tag as string);
-    } else if (category && userId) {
-      notes = await noteRepository.findByCategoryName(category as string, userId as string);
-    } else if (userId) {
-      notes = await noteRepository.findByUserId(userId as string);
-    } else {
-      notes = await noteRepository.findAll();
-    }
-
-    res.json({
-      success: true,
-      data: notes,
-    });
-  })
-);
-
-/**
- * @swagger
- * /api/notes/{id}:
- *   get:
- *     summary: Get note by ID
- *     tags: [Notes]
- *     parameters:
- *       - $ref: '#/components/parameters/IdParam'
- *     responses:
- *       200:
- *         description: Note found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   $ref: '#/components/schemas/Note'
- *       400:
- *         $ref: '#/components/responses/ValidationError'
- *       404:
- *         $ref: '#/components/responses/NotFound'
- *       500:
- *         $ref: '#/components/responses/ServerError'
- */
-router.get(
-  "/:id",
-  validateId,
-  asyncHandler(async (req: Request, res: Response<ApiResponse>) => {
-    const { id } = req.params;
-
-    if (!id) {
-      res.status(400).json({
-        success: false,
-        error: "Invalid ID",
-      });
-      return;
-    }
-
-    const note = await noteRepository.findById(id);
-
-    if (!note) {
-      res.status(404).json({
-        success: false,
-        error: "Note not found",
-      });
-      return;
-    }
-
-    res.json({
-      success: true,
-      data: note,
-    });
-  })
-);
 
 // GET /api/notes/user/:userId - Get notes by user ID
 router.get(
@@ -253,10 +111,13 @@ router.post(
       return;
     }
 
-    // If categoryId is empty or null, find or create a default category
-    if (!noteData.categoryId || noteData.categoryId === "") {
-      const defaultCategory = await categoryRepository.findOrCreateDefaultCategory(noteData.userId);
-      noteData.categoryId = defaultCategory.id;
+    const category = await categoryRepository.findById(noteData.categoryId);
+    if (!category) {
+      res.status(404).json({
+        success: false,
+        error: "Category not found",
+      });
+      return;
     }
 
     const note = await noteRepository.create(noteData);

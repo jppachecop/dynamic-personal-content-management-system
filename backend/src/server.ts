@@ -4,7 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import dotenv from "dotenv";
 
-import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
+import { errorHandler, notFoundHandler } from "./middleware/handlers";
 import { setupSwagger } from "./config/swagger";
 import usersRouter from "./routes/users";
 import notesRouter from "./routes/notes";
@@ -26,7 +26,6 @@ app.use(
     credentials: true,
   })
 );
-
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
