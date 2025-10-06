@@ -39,23 +39,6 @@ O **SGCPD** é uma aplicação web completa e moderna para gerenciamento de nota
 
 ---
 
-## 🎯 **Visão Geral**
-
-O **SGCPD** é um sistema web moderno e intuitivo para gerenciamento de notas pessoais, desenvolvido com foco na **experiência do usuário**, **responsividade** e **performance**. O projeto combina tecnologias de ponta para oferecer uma solução completa de organização de conteúdo pessoal.
-
-### **🌟 Características Principais**
-
-- **🎨 Interface Moderna**: Design limpo e intuitivo baseado em shadcn/ui
-- **📱 100% Responsivo**: Experiência otimizada para desktop, tablet e mobile
-- **⚡ Performance**: Desenvolvido com Vite e React 18 para máxima velocidade
-- **🎯 Acessibilidade**: Implementação completa de padrões WCAG
-- **💾 Persistência Robusta**: Dados armazenados em PostgreSQL com Prisma ORM
-- **🔌 API RESTful**: Backend completo com Express.js e documentação Swagger
-- **🔄 React Query**: Gerenciamento de estado e cache otimizado
-- **🔧 TypeScript**: Tipagem forte para maior confiabilidade do código
-
----
-
 ## 🎓 **Contexto Acadêmico**
 
 Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend** ministrada pelo **Prof. MSc. Reinaldo de Souza Júnior** no programa de **Residência em TI**.
@@ -92,29 +75,25 @@ Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend
 
 - ✅ **Categorias Personalizadas**: Sistema de categorias com cores customizáveis
 - ✅ **Sistema de Favoritos**: Marcar notas importantes como favoritas
-- ✅ **Busca Avançada**: Busca em tempo real por título, conteúdo e categorias
-- ✅ **Filtros Dinâmicos**: Filtrar por categoria, favoritos e data
+- ✅ **Busca Avançada**: Busca por título
+- ✅ **Filtros Dinâmicos**: Filtrar por categoria e favoritos
 
 #### **Visualização e Interface**
 
 - ✅ **Lista Responsiva**: Visualização otimizada para diferentes dispositivos
 - ✅ **Painéis Redimensionáveis**: Interface adaptável no desktop
 - ✅ **Timestamps Inteligentes**: Data de criação e última modificação
-- ✅ **Contadores Visuais**: Estatísticas de notas e categorias
+- ✅ **Contadores Visuais**: Quantidade de notas e categorias
 - ✅ **Toast Notifications**: Feedback visual para ações do usuário
 
 ### **🗂️ Gestão de Categorias**
 
 - ✅ **Criação Dinâmica**: Criar categorias com cores personalizadas
-- ✅ **Edição em Tempo Real**: Modificar nome e cor das categorias
 - ✅ **Contagem de Uso**: Visualizar quantas notas pertencem a cada categoria
-- ✅ **Proteção de Dados**: Restrições para evitar exclusão acidental
 
 ### **📱 Experiência Mobile Premium**
 
 - ✅ **Design Mobile-First**: Interface otimizada para dispositivos móveis
-- ✅ **Navegação Touch**: Menu lateral deslizante e gestos intuitivos
-- ✅ **Performance Touch**: Responsividade otimizada para interações de toque
 - ✅ **Layouts Adaptativos**: Componentes que se ajustam automaticamente
 
 ### **🎨 Interface e Design System**
@@ -122,15 +101,6 @@ Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend
 - ✅ **Tema Moderno**: Paleta de cores profissional e consistente
 - ✅ **Componentes Reutilizáveis**: Baseado em shadcn/ui e Radix UI
 - ✅ **Animações Fluidas**: Transições e micro-interações polidas
-- ✅ **Feedback Visual**: Estados claros de hover, focus e loading
-- ✅ **Modo Escuro/Claro**: Suporte completo a temas
-
-### **♿ Acessibilidade (A11y)**
-
-- ✅ **ARIA Labels**: Rótulos descritivos para leitores de tela
-- ✅ **Navegação por Teclado**: Suporte completo a navegação por tab
-- ✅ **Contraste Alto**: Cumprimento dos padrões WCAG 2.1
-- ✅ **Semântica HTML**: Estrutura HTML5 acessível e bem estruturada
 
 ---
 
@@ -144,7 +114,6 @@ Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend
 | **TypeScript**       | 5.6.3  | Tipagem estática              |
 | **Vite**             | 6.x    | Build tool e dev server       |
 | **TanStack Query**   | 5.90.2 | Gerenciamento de estado/cache |
-| **React Hook Form**  | 7.54.2 | Gerenciamento de formulários  |
 | **React Router DOM** | 6.30.1 | Roteamento SPA                |
 
 ### **🎨 Design & UI**
@@ -155,7 +124,6 @@ Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend
 | **shadcn/ui**    | Latest | Biblioteca de componentes |
 | **Radix UI**     | Várias | Componentes acessíveis    |
 | **Lucide React** | Latest | Ícones modernos           |
-| **Sonner**       | Latest | Sistema de notificações   |
 
 ### **🔗 Backend**
 
@@ -183,7 +151,6 @@ Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend
 | **Helmet**      | 7.1.0  | Segurança HTTP         |
 | **CORS**        | 2.8.5  | Cross-Origin Resource  |
 | **Compression** | 1.7.4  | Compressão de resposta |
-| **UUID**        | 9.0.1  | Geração de IDs únicos  |
 
 ---
 
@@ -449,50 +416,50 @@ VITE_APP_VERSION="1.0.0"
 
 ```typescript
 // 1. Componente React faz uma ação
-const { mutate: createNote } = useCreateNote()
+const { mutate: createNote } = useCreateNote();
 
 // 2. Hook personalizado usa TanStack Query
 const useCreateNote = () => {
   return useMutation({
     mutationFn: (noteData) => notesAPI.create(noteData),
     onSuccess: () => {
-      queryClient.invalidateQueries(["notes"])
-      toast.success("Nota criada com sucesso!")
+      queryClient.invalidateQueries(["notes"]);
+      toast.success("Nota criada com sucesso!");
     },
-  })
-}
+  });
+};
 
 // 3. API client faz a requisição HTTP
 const notesAPI = {
   create: (data) => api.post("/api/notes", data),
   // ... outras operações
-}
+};
 ```
 
 #### **2. Processamento no Backend**
 
 ```typescript
 // 1. Rota Express recebe a requisição
-app.post("/api/notes", validateNote, createNote)
+app.post("/api/notes", validateNote, createNote);
 
 // 2. Middleware de validação
 const validateNote = (req, res, next) => {
-  const errors = validationResult(req)
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({ errors: errors.array() });
   }
-  next()
-}
+  next();
+};
 
 // 3. Controller processa a lógica
 const createNote = async (req, res) => {
   try {
-    const note = await NoteRepository.create(req.body)
-    res.status(201).json(note)
+    const note = await NoteRepository.create(req.body);
+    res.status(201).json(note);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // 4. Repository acessa o banco via Prisma
 const NoteRepository = {
@@ -501,7 +468,7 @@ const NoteRepository = {
       data,
       include: { category: true, user: true },
     }),
-}
+};
 ```
 
 ### **🗄️ Schema do Banco de Dados**
@@ -723,13 +690,13 @@ npm run db:seed      # Popular banco com dados de teste
 ```typescript
 // ✅ Bom: Componente bem estruturado
 interface NoteCardProps {
-  note: Note
-  onEdit: (id: string) => void
-  onDelete: (id: string) => void
+  note: Note;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
 export function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
-  const { mutate: toggleFavorite } = useToggleFavorite()
+  const { mutate: toggleFavorite } = useToggleFavorite();
 
   return (
     <Card className="p-4 hover:shadow-md transition-shadow">
@@ -738,7 +705,7 @@ export function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
       </CardHeader>
       {/* ... resto do componente */}
     </Card>
-  )
+  );
 }
 ```
 
@@ -748,18 +715,18 @@ export function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
 // ✅ Naming conventions
 const useNotesAPI = () => {
   /* hook personalizado */
-}
+};
 const NotesRepository = {
   /* repository pattern */
-}
+};
 const validateNoteInput = () => {
   /* validation function */
-}
+};
 
 // ✅ File naming
-NoteCard.tsx // PascalCase para componentes
-useNotesAPI.ts // camelCase para hooks
-notes.routes.ts // kebab-case para arquivos comuns
+NoteCard.tsx; // PascalCase para componentes
+useNotesAPI.ts; // camelCase para hooks
+notes.routes.ts; // kebab-case para arquivos comuns
 ```
 
 #### **🔗 Estrutura de Commits**

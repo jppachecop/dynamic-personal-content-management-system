@@ -11,7 +11,7 @@ export const handleValidationErrors = (
   if (!errors.isEmpty()) {
     res.status(400).json({
       success: false,
-      error: "Validation failed",
+      error: "Falha na validação",
       data: errors.array(),
     });
     return;
@@ -19,143 +19,127 @@ export const handleValidationErrors = (
   next();
 };
 
-// User validation rules
+// Regras de validação de usuário
 export const validateCreateUser = [
   body("name")
     .trim()
     .notEmpty()
-    .withMessage("Name is required")
+    .withMessage("Nome é obrigatório")
     .isLength({ min: 1, max: 255 })
-    .withMessage("Name must be between 1 and 255 characters"),
+    .withMessage("Nome deve ter entre 1 e 255 caracteres"),
   body("email")
     .isEmail()
-    .withMessage("Valid email is required")
+    .withMessage("Email válido é obrigatório")
     .normalizeEmail(),
-  body("avatar").optional().isURL().withMessage("Avatar must be a valid URL"),
+  body("avatar").optional().isURL().withMessage("Avatar deve ser uma URL válida"),
   handleValidationErrors,
 ];
 
 export const validateUpdateUser = [
-  param("id").isUUID().withMessage("Valid user ID is required"),
+  param("id").isUUID().withMessage("ID de usuário válido é obrigatório"),
   body("name")
     .optional()
     .trim()
     .notEmpty()
-    .withMessage("Name cannot be empty")
+    .withMessage("Nome não pode estar vazio")
     .isLength({ min: 1, max: 255 })
-    .withMessage("Name must be between 1 and 255 characters"),
+    .withMessage("Nome deve ter entre 1 e 255 caracteres"),
   body("email")
     .optional()
     .isEmail()
-    .withMessage("Valid email is required")
+    .withMessage("Email válido é obrigatório")
     .normalizeEmail(),
   body("avatar")
     .optional()
     .custom((value) => {
       if (value === "" || value === null || value === undefined) {
-        return true; // Allow empty values
+        return true; // Permitir valores vazios
       }
       if (!/^https?:\/\/.+/.test(value)) {
-        throw new Error("Avatar must be a valid URL");
+        throw new Error("Avatar deve ser uma URL válida");
       }
       return true;
     }),
   handleValidationErrors,
 ];
 
-// Note validation rules
+// Regras de validação de nota
 export const validateCreateNote = [
   body("title")
     .trim()
     .notEmpty()
-    .withMessage("Title is required")
+    .withMessage("Título é obrigatório")
     .isLength({ min: 1, max: 500 })
-    .withMessage("Title must be between 1 and 500 characters"),
+    .withMessage("Título deve ter entre 1 e 500 caracteres"),
   body("content").optional().trim(),
-  body("tags").isArray().withMessage("Tags must be an array"),
-  body("tags.*").isString().withMessage("Each tag must be a string"),
+  body("tags").isArray().withMessage("Tags devem ser um array"),
+  body("tags.*").isString().withMessage("Cada tag deve ser uma string"),
   body("categoryId").custom((value) => {
     if (value === "" || value === null || value === undefined) {
-      return true; // Allow empty values
+      return true; // Permitir valores vazios
     }
     if (
       !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
         value
       )
     ) {
-      throw new Error("Valid category ID is required");
+      throw new Error("ID de categoria válido é obrigatório");
     }
     return true;
   }),
-  body("userId").isUUID().withMessage("Valid user ID is required"),
+  body("userId").isUUID().withMessage("ID de usuário válido é obrigatório"),
   body("isFavorite")
     .optional()
     .isBoolean()
-    .withMessage("isFavorite must be a boolean"),
+    .withMessage("isFavorite deve ser um booleano"),
   handleValidationErrors,
 ];
 
 export const validateUpdateNote = [
-  param("id").isUUID().withMessage("Valid note ID is required"),
+  param("id").isUUID().withMessage("ID de nota válido é obrigatório"),
   body("title")
     .optional()
     .trim()
     .notEmpty()
-    .withMessage("Title cannot be empty")
+    .withMessage("Título não pode estar vazio")
     .isLength({ min: 1, max: 500 })
-    .withMessage("Title must be between 1 and 500 characters"),
+    .withMessage("Título deve ter entre 1 e 500 caracteres"),
   body("content").optional().trim(),
-  body("tags").optional().isArray().withMessage("Tags must be an array"),
-  body("tags.*").isString().withMessage("Each tag must be a string"),
+  body("tags").optional().isArray().withMessage("Tags devem ser um array"),
+  body("tags.*").isString().withMessage("Cada tag deve ser uma string"),
   body("categoryId")
     .optional()
     .isUUID()
-    .withMessage("Valid category ID is required"),
+    .withMessage("ID de categoria válido é obrigatório"),
   body("isFavorite")
     .optional()
     .isBoolean()
-    .withMessage("isFavorite must be a boolean"),
+    .withMessage("isFavorite deve ser um booleano"),
   handleValidationErrors,
 ];
 
-// Category validation rules
+// Regras de validação de categoria
 export const validateCreateCategory = [
   body("name")
     .trim()
     .notEmpty()
-    .withMessage("Name is required")
+    .withMessage("Nome é obrigatório")
     .isLength({ min: 1, max: 255 })
-    .withMessage("Name must be between 1 and 255 characters"),
+    .withMessage("Nome deve ter entre 1 e 255 caracteres"),
   body("color")
     .matches(/^#[0-9A-Fa-f]{6}$/)
-    .withMessage("Color must be a valid hex color"),
-  body("userId").isUUID().withMessage("Valid user ID is required"),
+    .withMessage("Cor deve ser um código hexadecimal válido"),
+  body("userId").isUUID().withMessage("ID de usuário válido é obrigatório"),
   handleValidationErrors,
 ];
 
-export const validateUpdateCategory = [
-  param("id").isUUID().withMessage("Valid category ID is required"),
-  body("name")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("Name cannot be empty")
-    .isLength({ min: 1, max: 255 })
-    .withMessage("Name must be between 1 and 255 characters"),
-  body("color")
-    .optional()
-    .matches(/^#[0-9A-Fa-f]{6}$/)
-    .withMessage("Color must be a valid hex color"),
-  handleValidationErrors,
-];
-
-// Common validation rules
+// Regras de validação comuns
 export const validateId = [
-  param("id").isUUID().withMessage("Valid ID is required"),
+  param("id").isUUID().withMessage("ID válido é obrigatório"),
   handleValidationErrors,
 ];
 
 export const validateUserId = [
-  param("userId").isUUID().withMessage("Valid user ID is required"),
+  param("userId").isUUID().withMessage("ID de usuário válido é obrigatório"),
   handleValidationErrors,
 ];

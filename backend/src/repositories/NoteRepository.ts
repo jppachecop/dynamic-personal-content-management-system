@@ -45,7 +45,7 @@ export class NoteRepository {
 
   async update(noteData: UpdateNoteInput): Promise<Note> {
     if (!noteData.id) {
-      throw new Error("Note ID is required for update");
+      throw new Error("ID da nota é obrigatório para atualização");
     }
 
     const { id, category, ...updateData } = noteData;
@@ -56,7 +56,7 @@ export class NoteRepository {
     );
 
     if (Object.keys(cleanUpdateData).length === 0) {
-      throw new Error("No fields to update");
+      throw new Error("Nenhum campo para atualizar");
     }
 
     const note = await prisma.note.update({

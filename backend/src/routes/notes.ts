@@ -26,7 +26,7 @@ router.get(
     if (!userId) {
       res.status(400).json({
         success: false,
-        error: "Invalid user ID",
+        error: "ID de usuário inválido",
       });
       return;
     }
@@ -36,7 +36,7 @@ router.get(
     if (!userExists) {
       res.status(404).json({
         success: false,
-        error: "User not found",
+        error: "Usuário não encontrado",
       });
       return;
     }
@@ -106,7 +106,7 @@ router.post(
     if (!userExists) {
       res.status(404).json({
         success: false,
-        error: "User not found",
+        error: "Usuário não encontrado",
       });
       return;
     }
@@ -115,7 +115,7 @@ router.post(
     if (!category) {
       res.status(404).json({
         success: false,
-        error: "Category not found",
+        error: "Categoria não encontrada",
       });
       return;
     }
@@ -124,7 +124,7 @@ router.post(
     res.status(201).json({
       success: true,
       data: note,
-      message: "Note created successfully",
+      message: "Nota criada com sucesso",
     });
   })
 );
@@ -139,7 +139,7 @@ router.put(
     if (!id) {
       res.status(400).json({
         success: false,
-        error: "Invalid ID",
+        error: "ID inválido",
       });
       return;
     }
@@ -151,7 +151,7 @@ router.put(
     if (!existingNote) {
       res.status(404).json({
         success: false,
-        error: "Note not found",
+        error: "Nota não encontrada",
       });
       return;
     }
@@ -163,7 +163,7 @@ router.put(
     res.json({
       success: true,
       data: note,
-      message: "Note updated successfully",
+      message: "Nota atualizada com sucesso",
     });
   })
 );
@@ -178,7 +178,7 @@ router.delete(
     if (!id) {
       res.status(400).json({
         success: false,
-        error: "Invalid ID",
+        error: "ID inválido",
       });
       return;
     }
@@ -188,7 +188,7 @@ router.delete(
     if (!existingNote) {
       res.status(404).json({
         success: false,
-        error: "Note not found",
+        error: "Nota não encontrada",
       });
       return;
     }
@@ -196,7 +196,7 @@ router.delete(
     await noteRepository.delete(id);
     res.json({
       success: true,
-      message: "Note deleted successfully",
+      message: "Nota excluída com sucesso",
     });
   })
 );

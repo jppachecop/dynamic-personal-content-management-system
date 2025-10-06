@@ -67,7 +67,7 @@ setupSwagger(app);
 app.get("/health", (_, res) => {
   res.json({
     success: true,
-    message: "Server is running",
+    message: "Servidor está funcionando",
     timestamp: new Date().toISOString(),
     environment: process.env["NODE_ENV"] || "development",
   });
@@ -84,30 +84,30 @@ app.use(notFoundHandler);
 // Error handling middleware
 app.use(errorHandler);
 
-// Start server
+// Iniciar servidor
 const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env["NODE_ENV"] || "development"}`);
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
+  console.log(`📊 Ambiente: ${process.env["NODE_ENV"] || "development"}`);
   console.log(
-    `🌐 CORS enabled for: ${
+    `🌐 CORS habilitado para: ${
       process.env["FRONTEND_URL"] || "http://localhost:3000"
     }`
   );
 });
 
-// Graceful shutdown
+// Encerramento gracioso
 process.on("SIGTERM", () => {
-  console.log("SIGTERM received. Shutting down gracefully...");
+  console.log("SIGTERM recebido. Encerrando graciosamente...");
   server.close(() => {
-    console.log("Process terminated");
+    console.log("Processo terminado");
     process.exit(0);
   });
 });
 
 process.on("SIGINT", () => {
-  console.log("SIGINT received. Shutting down gracefully...");
+  console.log("SIGINT recebido. Encerrando graciosamente...");
   server.close(() => {
-    console.log("Process terminated");
+    console.log("Processo terminado");
     process.exit(0);
   });
 });

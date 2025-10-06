@@ -117,7 +117,7 @@ router.post(
     if (existingCategory) {
       res.status(409).json({
         success: false,
-        error: "Category name already exists",
+        error: "Nome da categoria já existe",
       });
       return;
     }
@@ -126,7 +126,7 @@ router.post(
     res.status(201).json({
       success: true,
       data: category,
-      message: "Category created successfully",
+      message: "Categoria criada com sucesso",
     });
   })
 );
