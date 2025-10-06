@@ -32,7 +32,7 @@ export class UserRepository {
 
   async update(userData: UpdateUserInput): Promise<User> {
     if (!userData.id) {
-      throw new Error("User ID is required for update");
+      throw new Error("ID do usuário é obrigatório para atualização");
     }
 
     const { id, ...updateData } = userData;
@@ -43,7 +43,7 @@ export class UserRepository {
     );
 
     if (Object.keys(cleanUpdateData).length === 0) {
-      throw new Error("No fields to update");
+      throw new Error("Nenhum campo para atualizar");
     }
 
     const user = await prisma.user.update({

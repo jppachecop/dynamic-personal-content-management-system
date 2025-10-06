@@ -13,23 +13,23 @@ export const errorHandler = (
   _next: NextFunction
 ): void => {
   let statusCode = error.statusCode || 500;
-  let message = error.message || "Internal Server Error";
+  let message = error.message || "Erro interno do servidor";
 
-  // PostgreSQL specific errors
+  // Erros específicos do PostgreSQL
   if (error.message.includes("duplicate key value")) {
     statusCode = 409;
-    message = "Resource already exists";
+    message = "Recurso já existe";
   } else if (error.message.includes("foreign key constraint")) {
     statusCode = 400;
-    message = "Invalid reference to related resource";
+    message = "Referência inválida para recurso relacionado";
   } else if (error.message.includes("not found")) {
     statusCode = 404;
-    message = "Resource not found";
+    message = "Recurso não encontrado";
   }
 
-  // Log error for debugging
+  // Log de erro para debugging
   if (statusCode >= 500) {
-    console.error("Server Error:", error);
+    console.error("Erro do Servidor:", error);
   }
 
   res.status(statusCode).json({
@@ -46,7 +46,7 @@ export const notFoundHandler = (
 ): void => {
   res.status(404).json({
     success: false,
-    error: `Route ${req.method} ${req.path} not found`,
+    error: `Rota ${req.method} ${req.path} não encontrada`,
   });
 };
 

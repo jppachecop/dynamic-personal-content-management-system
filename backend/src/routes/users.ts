@@ -61,7 +61,7 @@ router.post(
     if (!email) {
       res.status(400).json({
         success: false,
-        error: "Email is required",
+        error: "Email é obrigatório",
       });
       return;
     }
@@ -71,7 +71,7 @@ router.post(
     if (!emailRegex.test(email)) {
       res.status(400).json({
         success: false,
-        error: "Invalid email format",
+        error: "Formato de email inválido",
       });
       return;
     }
@@ -81,7 +81,7 @@ router.post(
     if (!user) {
       res.status(404).json({
         success: false,
-        error: "User not found",
+        error: "Usuário não encontrado",
       });
       return;
     }
@@ -89,7 +89,7 @@ router.post(
     res.json({
       success: true,
       data: user,
-      message: "Login successful",
+      message: "Login realizado com sucesso",
     });
   })
 );
@@ -140,7 +140,7 @@ router.post(
     if (existingUser) {
       res.status(409).json({
         success: false,
-        error: "Email already exists",
+        error: "Email já existe",
       });
       return;
     }
@@ -149,7 +149,7 @@ router.post(
     res.status(201).json({
       success: true,
       data: user,
-      message: "User created successfully",
+      message: "Usuário criado com sucesso",
     });
   })
 );
@@ -213,7 +213,7 @@ router.put(
     if (!id) {
       res.status(400).json({
         success: false,
-        error: "Invalid ID",
+        error: "ID inválido",
       });
       return;
     }
@@ -236,7 +236,7 @@ router.put(
       if (emailExists) {
         res.status(409).json({
           success: false,
-          error: "Email already exists",
+          error: "Email já existe",
         });
         return;
       }
@@ -249,7 +249,7 @@ router.put(
     res.json({
       success: true,
       data: user,
-      message: "User updated successfully",
+      message: "Usuário atualizado com sucesso",
     });
   })
 );
@@ -292,7 +292,7 @@ router.delete(
     if (!id) {
       res.status(400).json({
         success: false,
-        error: "Invalid ID",
+        error: "ID inválido",
       });
       return;
     }
@@ -302,7 +302,7 @@ router.delete(
     if (!existingUser) {
       res.status(404).json({
         success: false,
-        error: "User not found",
+        error: "Usuário não encontrado",
       });
       return;
     }
@@ -310,7 +310,7 @@ router.delete(
     await userRepository.delete(id);
     res.json({
       success: true,
-      message: "User deleted successfully",
+      message: "Usuário excluído com sucesso",
     });
   })
 );
