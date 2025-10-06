@@ -1,4 +1,5 @@
 # 📝 SGCPD - Sistema de Gestão de Conteúdo Pessoal Dinâmico
+
 <div align="center">
 
 ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=white)
@@ -10,11 +11,12 @@
 ![Vite](https://img.shields.io/badge/Vite-5.4.19-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-_Sistema moderno e responsivo para gerenciamento inteligente de notas pessoais, construído com **React + TypeScript** (frontend) e **Node.js + Express + PostgreSQL + Prisma** (backend).
+\_Sistema moderno e responsivo para gerenciamento inteligente de notas pessoais, construído com **React + TypeScript** (frontend) e **Node.js + Express + PostgreSQL + Prisma** (backend).
 
 </div>
 
 ---
+
 ## 🎯 **Visão Geral**
 
 O **SGCPD** é um sistema web moderno e intuitivo para gerenciamento de notas pessoais, desenvolvido com foco na **experiência do usuário**, **responsividade** e **performance**. O projeto combina tecnologias de ponta para oferecer uma solução completa de organização de conteúdo pessoal.
@@ -178,16 +180,19 @@ Certifique-se de ter instalado:
 ### **Frontend (React)**
 
 1. **Navegue para o diretório frontend:**
+
    ```bash
    cd frontend
    ```
 
 2. **Instale as dependências:**
+
    ```bash
    npm install
    ```
 
 3. **Execute o frontend:**
+
    ```bash
    npm run dev
    ```
@@ -200,33 +205,39 @@ Certifique-se de ter instalado:
 ### **Backend (API)**
 
 1. **Navegue para o diretório backend:**
+
    ```bash
    cd backend
    ```
 
 2. **Instale as dependências:**
+
    ```bash
    npm install
    ```
 
 3. **Configure o banco de dados:**
+
    ```bash
    cp .env.example .env
    # Edite o .env com suas configurações do PostgreSQL
    ```
 
 4. **Execute as migrações:**
+
    ```bash
    npm run migrate
    npm run db:seed
    ```
 
 5. **Execute o backend:**
+
    ```bash
    npm run dev
    ```
 
 6. **Acesse a API:**
+
    ```
    http://localhost:3001
    ```
@@ -250,6 +261,31 @@ npm run build:dev    # Build de desenvolvimento
 npm run lint         # Executa ESLint
 npm run preview      # Preview do build de produção
 ```
+
+---
+
+## 🐳 **Execução com Docker (Opcional)**
+
+Para quem prefere usar Docker, você pode executar toda a aplicação com um comando:
+
+```bash
+# Na raiz do projeto
+docker-compose up --build
+```
+
+**Acesse:**
+- **Frontend**: http://localhost:5173
+- **Backend**: http://localhost:3001
+- **API Docs**: http://localhost:3001/api-docs
+
+**Para parar:**
+```bash
+docker-compose down
+```
+
+**Pré-requisitos:**
+- Docker
+- Docker Compose
 
 ---
 
@@ -330,7 +366,7 @@ const BREAKPOINTS = {
   mobile: 480, // 0-479px
   tablet: 768, // 480-767px
   desktop: 1024, // 768px+
-}
+};
 ```
 
 #### **Estratégia Mobile-First**

@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: sgcpd-postgres
+    environment:
+      POSTGRES_DB: sgcpd_database
+      POSTGRES_USER: sgcpd_user
+      POSTGRES_PASSWORD: sgcpd_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sgcpd_user -d sgcpd_database"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: sgcpd-backend
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://sgcpd_user:sgcpd_password@postgres:5432/sgcpd_database
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: sgcpd-frontend
+    environment:
+      VITE_API_URL: http://localhost:3001
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
