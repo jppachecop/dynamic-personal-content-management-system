@@ -133,22 +133,6 @@ export const validateCreateCategory = [
   handleValidationErrors,
 ];
 
-export const validateUpdateCategory = [
-  param("id").isUUID().withMessage("Valid category ID is required"),
-  body("name")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("Name cannot be empty")
-    .isLength({ min: 1, max: 255 })
-    .withMessage("Name must be between 1 and 255 characters"),
-  body("color")
-    .optional()
-    .matches(/^#[0-9A-Fa-f]{6}$/)
-    .withMessage("Color must be a valid hex color"),
-  handleValidationErrors,
-];
-
 // Common validation rules
 export const validateId = [
   param("id").isUUID().withMessage("Valid ID is required"),
