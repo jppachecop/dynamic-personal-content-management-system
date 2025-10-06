@@ -74,17 +74,19 @@ export const validateCreateNote = [
   body("content").optional().trim(),
   body("tags").isArray().withMessage("Tags must be an array"),
   body("tags.*").isString().withMessage("Each tag must be a string"),
-  body("categoryId")
-    .optional()
-    .custom((value) => {
-      if (value === "" || value === null || value === undefined) {
-        return true; // Allow empty values
-      }
-      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
-        throw new Error("Valid category ID is required");
-      }
-      return true;
-    }),
+  body("categoryId").custom((value) => {
+    if (value === "" || value === null || value === undefined) {
+      return true; // Allow empty values
+    }
+    if (
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        value
+      )
+    ) {
+      throw new Error("Valid category ID is required");
+    }
+    return true;
+  }),
   body("userId").isUUID().withMessage("Valid user ID is required"),
   body("isFavorite")
     .optional()
@@ -116,7 +118,6 @@ export const validateUpdateNote = [
   handleValidationErrors,
 ];
 
-
 // Category validation rules
 export const validateCreateCategory = [
   body("name")
@@ -128,9 +129,7 @@ export const validateCreateCategory = [
   body("color")
     .matches(/^#[0-9A-Fa-f]{6}$/)
     .withMessage("Color must be a valid hex color"),
-  body("userId")
-    .isUUID()
-    .withMessage("Valid user ID is required"),
+  body("userId").isUUID().withMessage("Valid user ID is required"),
   handleValidationErrors,
 ];
 

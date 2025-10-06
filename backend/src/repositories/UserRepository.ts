@@ -10,7 +10,7 @@ export class UserRepository {
         avatar: userData.avatar,
       },
     });
-    
+
     return user;
   }
 
@@ -18,7 +18,7 @@ export class UserRepository {
     const user = await prisma.user.findUnique({
       where: { id },
     });
-    
+
     return user;
   }
 
@@ -26,16 +26,8 @@ export class UserRepository {
     const user = await prisma.user.findUnique({
       where: { email },
     });
-    
-    return user;
-  }
 
-  async findAll(): Promise<User[]> {
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    
-    return users;
+    return user;
   }
 
   async update(userData: UpdateUserInput): Promise<User> {
@@ -44,7 +36,7 @@ export class UserRepository {
     }
 
     const { id, ...updateData } = userData;
-    
+
     // Remove undefined values
     const cleanUpdateData = Object.fromEntries(
       Object.entries(updateData).filter(([_, value]) => value !== undefined)
@@ -73,7 +65,7 @@ export class UserRepository {
       where: { id },
       select: { id: true },
     });
-    
+
     return user !== null;
   }
 }

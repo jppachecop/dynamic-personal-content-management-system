@@ -16,7 +16,7 @@ export class NoteRepository {
         category: true,
       },
     });
-    
+
     return note;
   }
 
@@ -27,19 +27,8 @@ export class NoteRepository {
         category: true,
       },
     });
-    
-    return note;
-  }
 
-  async findAll(): Promise<Note[]> {
-    const notes = await prisma.note.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
-      },
-    });
-    
-    return notes;
+    return note;
   }
 
   async findByUserId(userId: string): Promise<Note[]> {
@@ -50,96 +39,7 @@ export class NoteRepository {
         category: true,
       },
     });
-    
-    return notes;
-  }
 
-  async findByCategoryId(categoryId: string): Promise<Note[]> {
-    const notes = await prisma.note.findMany({
-      where: { categoryId },
-      orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
-      },
-    });
-    
-    return notes;
-  }
-
-  async findByCategoryName(categoryName: string, userId: string): Promise<Note[]> {
-    const notes = await prisma.note.findMany({
-      where: {
-        category: {
-          name: categoryName,
-          userId: userId,
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
-      },
-    });
-    
-    return notes;
-  }
-
-  async findByTag(tag: string): Promise<Note[]> {
-    const notes = await prisma.note.findMany({
-      where: {
-        tags: {
-          has: tag,
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
-      },
-    });
-    
-    return notes;
-  }
-
-  async findFavorites(userId?: string): Promise<Note[]> {
-    const where: { isFavorite: boolean; userId?: string } = { isFavorite: true };
-    
-    if (userId) {
-      where.userId = userId;
-    }
-    
-    const notes = await prisma.note.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
-      },
-    });
-    
-    return notes;
-  }
-
-  async search(searchTerm: string, userId?: string): Promise<Note[]> {
-    const where: {
-      OR: Array<{ title?: { contains: string; mode: "insensitive" } } | { content?: { contains: string; mode: "insensitive" } }>;
-      userId?: string;
-    } = {
-      OR: [
-        { title: { contains: searchTerm, mode: "insensitive" } },
-        { content: { contains: searchTerm, mode: "insensitive" } },
-      ],
-    };
-    
-    if (userId) {
-      where.userId = userId;
-    }
-    
-    const notes = await prisma.note.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
-      },
-    });
-    
     return notes;
   }
 
@@ -149,7 +49,7 @@ export class NoteRepository {
     }
 
     const { id, category, ...updateData } = noteData;
-    
+
     // Remove undefined values
     const cleanUpdateData = Object.fromEntries(
       Object.entries(updateData).filter(([_, value]) => value !== undefined)
@@ -174,19 +74,5 @@ export class NoteRepository {
     await prisma.note.delete({
       where: { id },
     });
-  }
-
-  async deleteByUserId(userId: string): Promise<void> {
-    await prisma.note.deleteMany({
-      where: { userId },
-    });
-  }
-
-  async countByUserId(userId: string): Promise<number> {
-    const count = await prisma.note.count({
-      where: { userId },
-    });
-    
-    return count;
   }
 }
