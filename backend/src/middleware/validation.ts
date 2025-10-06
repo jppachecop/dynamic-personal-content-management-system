@@ -116,36 +116,6 @@ export const validateUpdateNote = [
   handleValidationErrors,
 ];
 
-// Tag validation rules
-export const createTagValidation = [
-  body("name")
-    .trim()
-    .notEmpty()
-    .withMessage("Name is required")
-    .isLength({ min: 1, max: 255 })
-    .withMessage("Name must be between 1 and 255 characters"),
-  body("count")
-    .optional()
-    .isInt({ min: 0 })
-    .withMessage("Count must be a non-negative integer"),
-  handleValidationErrors,
-];
-
-export const validateUpdateTag = [
-  param("id").isUUID().withMessage("Valid tag ID is required"),
-  body("name")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("Name cannot be empty")
-    .isLength({ min: 1, max: 255 })
-    .withMessage("Name must be between 1 and 255 characters"),
-  body("count")
-    .optional()
-    .isInt({ min: 0 })
-    .withMessage("Count must be a non-negative integer"),
-  handleValidationErrors,
-];
 
 // Category validation rules
 export const validateCreateCategory = [

@@ -82,18 +82,23 @@ export class CategoryRepository {
     });
   }
 
-  async exists(name: string): Promise<boolean> {
+  async exists(name: string, userId: string): Promise<boolean> {
     const category = await prisma.category.findUnique({
-      where: { name },
+      where: { 
+        name_userId: {
+          name,
+          userId
+        }
+      },
       select: { id: true },
     });
 
     return category !== null;
   }
 
-  async getCategoryUsageCount(categoryName: string): Promise<number> {
+  async getCategoryUsageCount(categoryId: string): Promise<number> {
     const count = await prisma.note.count({
-      where: { category: categoryName },
+      where: { categoryId },
     });
 
     return count;
@@ -107,7 +112,7 @@ export class CategoryRepository {
     const categoriesWithUsage = await Promise.all(
       categories.map(async (category) => {
         const usageCount = await prisma.note.count({
-          where: { category: category.name },
+          where: { categoryId: category.id },
         });
 
         return {

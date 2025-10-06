@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import morgan from "morgan";
 import compression from "compression";
 import dotenv from "dotenv";
 
@@ -9,7 +8,6 @@ import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import { setupSwagger } from "./config/swagger";
 import usersRouter from "./routes/users";
 import notesRouter from "./routes/notes";
-import tagsRouter from "./routes/tags";
 import categoriesRouter from "./routes/categories";
 
 // Load environment variables
@@ -29,10 +27,6 @@ app.use(
   })
 );
 
-// Logging middleware
-if (process.env["NODE_ENV"] !== "test") {
-  app.use(morgan("combined"));
-}
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
@@ -83,7 +77,6 @@ app.get("/health", (_, res) => {
 // API routes
 app.use("/api/users", usersRouter);
 app.use("/api/notes", notesRouter);
-app.use("/api/tags", tagsRouter);
 app.use("/api/categories", categoriesRouter);
 
 // 404 handler
