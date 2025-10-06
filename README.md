@@ -224,7 +224,7 @@ dynamic-personal-content-management-system/
 └── 📝 *.md                      # Documentação adicional
 ```
 
-### **🔄 Fluxo de Dados Atualizado**
+### **🔄 Fluxo de Dados**
 
 ```mermaid
 graph TB
@@ -259,7 +259,7 @@ graph TB
         O[Prisma Studio]
     end
 
-    style A fill:#61DAFB
+    style A fill:#3366ff
     style E fill:#339933
     style I fill:#336791
     style M fill:#2496ED
@@ -442,80 +442,6 @@ VITE_APP_VERSION="1.0.0"
 ---
 
 ## 📖 **Documentação Técnica**
-
-### **🏗️ Arquitetura Detalhada**
-
-#### **Frontend (React + TypeScript)**
-
-```
-src/
-├── 📁 components/              # Componentes React organizados
-│   ├── 📁 layout/             # Componentes de layout e navegação
-│   │   ├── AppLayout.tsx       # Layout principal da aplicação
-│   │   ├── AppSidebar.tsx      # Sidebar para desktop
-│   │   ├── AuthenticatedLayout.tsx # Layout para usuários logados
-│   │   ├── MobileLayout.tsx    # Layout específico para mobile
-│   │   ├── MobileNavigation.tsx # Navegação mobile com drawer
-│   │   └── UnauthenticatedLayout.tsx # Layout para login/registro
-│   ├── 📁 notes/              # Componentes relacionados a notas
-│   │   ├── NotesList.tsx       # Lista de notas com filtros
-│   │   ├── NoteEditor.tsx      # Editor de notas
-│   │   └── DeleteNoteDialog.tsx # Modal de confirmação
-│   ├── 📁 ui/                 # Componentes base (shadcn/ui)
-│   │   ├── button.tsx          # Componente de botão
-│   │   ├── input.tsx           # Componente de input
-│   │   ├── card.tsx            # Componente de card
-│   │   ├── dialog.tsx          # Componente de modal
-│   │   ├── CategoryDialog.tsx  # Modal para categorias
-│   │   ├── LoadingScreen.tsx   # Tela de carregamento
-│   │   └── sonner.tsx          # Sistema de notificações
-│   └── 📁 users/              # Componentes de usuário
-├── 📁 contexts/               # Contextos React
-│   ├── AppContext.tsx         # Contexto principal da aplicação
-│   └── AuthContext.tsx        # Contexto de autenticação
-├── 📁 hooks/                  # Custom hooks
-│   ├── useNotesAPI.ts         # Hook para API de notas
-│   ├── useCategoriesAPI.ts    # Hook para API de categorias
-│   ├── useUsersAPI.ts         # Hook para API de usuários
-│   ├── use-mobile.tsx         # Hook para detecção mobile
-│   ├── useLocalStorage.ts     # Hook para localStorage
-│   ├── useNotesEditorSplit.ts # Hook para painéis redimensionáveis
-│   └── use-toast.ts           # Hook para notificações
-├── 📁 lib/                    # Utilitários e configurações
-│   ├── api.ts                 # Cliente HTTP (axios/fetch)
-│   ├── queryClient.ts         # Configuração do TanStack Query
-│   └── utils.ts               # Funções auxiliares
-├── 📁 pages/                  # Páginas da aplicação
-│   ├── Index.tsx              # Página principal
-│   └── NotFound.tsx           # Página 404
-└── 📁 types/                  # Definições TypeScript
-    └── index.ts               # Tipos principais
-```
-
-#### **Backend (Node.js + Express + Prisma)**
-
-```
-src/
-├── 📁 config/                 # Configurações
-│   ├── prisma.ts              # Configuração do Prisma Client
-│   └── swagger.ts             # Configuração do Swagger/OpenAPI
-├── 📁 middleware/             # Middlewares Express
-│   ├── errorHandler.ts        # Tratamento de erros globais
-│   └── validation.ts          # Validação de dados
-├── 📁 repositories/           # Camada de acesso a dados
-│   ├── UserRepository.ts      # Operações de usuário
-│   ├── NoteRepository.ts      # Operações de notas
-│   ├── CategoryRepository.ts  # Operações de categorias
-│   └── index.ts               # Exports centralizados
-├── 📁 routes/                 # Definição das rotas da API
-│   ├── users.ts               # Rotas de usuários (/api/users)
-│   ├── notes.ts               # Rotas de notas (/api/notes)
-│   ├── categories.ts          # Rotas de categorias (/api/categories)
-│   └── index.ts               # Agregação de rotas
-├── 📁 types/                  # Tipos TypeScript
-│   └── index.ts               # Tipos e interfaces
-└── server.ts                  # Ponto de entrada da aplicação
-```
 
 ### **🔄 Fluxo de Dados Detalhado**
 
@@ -1192,15 +1118,14 @@ copies or substantial portions of the Software.
 
 - 👤 **Iury Tavares** - Full-Stack Developer & UI/UX
 - 👤 **João Paulo Pacheco** - Full-Stack Developer & DevOps
-- 👤 **Lucas Fernandes Silva** - Full-Stack Developer
+- 👤 **Lucas Fernandes Silva** - Full-Stack Developer & Testing
 - 👤 **Marcos Vinícius de Souza Oliveira** - Full-Stack Developer & Testing
 
 ### **🎓 Contexto Acadêmico**
 
-**Instituição:** Programa de Residência em TI  
+**Instituição:** Universidade Federal de Goiás - Programa de Residência em TI  
 **Disciplina:** Frontend Development  
 **Professor:** MSc. Reinaldo de Souza Júnior  
-**Período:** 2024.2
 
 ---
 
