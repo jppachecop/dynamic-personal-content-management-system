@@ -39,23 +39,6 @@ O **SGCPD** é uma aplicação web completa e moderna para gerenciamento de nota
 
 ---
 
-## 🎯 **Visão Geral**
-
-O **SGCPD** é um sistema web moderno e intuitivo para gerenciamento de notas pessoais, desenvolvido com foco na **experiência do usuário**, **responsividade** e **performance**. O projeto combina tecnologias de ponta para oferecer uma solução completa de organização de conteúdo pessoal.
-
-### **🌟 Características Principais**
-
-- **🎨 Interface Moderna**: Design limpo e intuitivo baseado em shadcn/ui
-- **📱 100% Responsivo**: Experiência otimizada para desktop, tablet e mobile
-- **⚡ Performance**: Desenvolvido com Vite e React 18 para máxima velocidade
-- **🎯 Acessibilidade**: Implementação completa de padrões WCAG
-- **💾 Persistência Robusta**: Dados armazenados em PostgreSQL com Prisma ORM
-- **🔌 API RESTful**: Backend completo com Express.js e documentação Swagger
-- **🔄 React Query**: Gerenciamento de estado e cache otimizado
-- **🔧 TypeScript**: Tipagem forte para maior confiabilidade do código
-
----
-
 ## 🎓 **Contexto Acadêmico**
 
 Este projeto foi desenvolvido como trabalho prático da disciplina de **Frontend** ministrada pelo **Prof. MSc. Reinaldo de Souza Júnior** no programa de **Residência em TI**.
