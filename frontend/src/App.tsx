@@ -1,5 +1,4 @@
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -15,7 +14,6 @@ const App = () => (
     <BrowserRouter>
       <AuthProvider>
         <Toaster />
-        <Sonner />
         <Routes>
           <Route element={<UnauthenticatedLayout />}>
             <Route path="/" element={<WelcomeScreen />} />
